@@ -1,0 +1,3330 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AW注文×キャンペーン利用レポート</title>
+  <style id="appStyles">
+    :root {
+      --bg: #f6f7f2;
+      --panel: #ffffff;
+      --ink: #1b2524;
+      --muted: #66716f;
+      --line: #dce2dc;
+      --soft: #eef2ec;
+      --accent: #007c78;
+      --accent-2: #c4662f;
+      --accent-3: #435a92;
+      --new-color: #2563eb;
+      --existing-color: #f97316;
+      --warn: #a84646;
+      --shadow: 0 14px 36px rgba(30, 42, 38, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif;
+      font-size: 16px;
+      letter-spacing: 0;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100%;
+      background: var(--bg);
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+      letter-spacing: 0;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app {
+      width: min(1440px, 100%);
+      margin: 0 auto;
+      padding: 28px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 10px 0 24px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 0;
+      font-size: clamp(1.7rem, 3vw, 2.8rem);
+      line-height: 1.15;
+    }
+
+    h2 {
+      margin-bottom: 8px;
+      font-size: 1.35rem;
+      line-height: 1.25;
+    }
+
+    h3 {
+      margin-bottom: 8px;
+      font-size: 1rem;
+      line-height: 1.35;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .file-button,
+    .ghost-button,
+    .primary-button {
+      min-height: 42px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      padding: 10px 14px;
+      background: var(--panel);
+      color: var(--ink);
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: none;
+    }
+
+    .primary-button,
+    .file-button {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: #ffffff;
+    }
+
+    .ghost-button:disabled {
+      color: #9aa29f;
+      cursor: not-allowed;
+    }
+
+    .file-button input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .upload-band {
+      margin: 26px 0;
+      border: 1px dashed #a7b6ad;
+      border-radius: 8px;
+      background: #fbfcf8;
+      padding: 34px;
+      display: grid;
+      gap: 14px;
+      place-items: center;
+      text-align: center;
+      transition: border-color 0.18s ease, background 0.18s ease;
+    }
+
+    .upload-band.is-dragging {
+      border-color: var(--accent);
+      background: #edf8f5;
+    }
+
+    .upload-mark {
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--soft);
+      color: var(--accent);
+      font-size: 1.5rem;
+      font-weight: 800;
+    }
+
+    .upload-title {
+      margin-bottom: 2px;
+      font-size: 1.12rem;
+      font-weight: 800;
+    }
+
+    .upload-copy,
+    .small-copy {
+      margin-bottom: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .message {
+      display: none;
+      margin: 18px 0;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      padding: 14px 16px;
+      color: var(--muted);
+    }
+
+    .message.is-error {
+      display: block;
+      border-color: rgba(168, 70, 70, 0.36);
+      color: var(--warn);
+      background: #fff7f5;
+    }
+
+    .message.is-info {
+      display: block;
+      color: var(--ink);
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    .report {
+      display: grid;
+      gap: 24px;
+      margin-top: 24px;
+    }
+
+    .report-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .toolbar-meta {
+      min-width: 220px;
+    }
+
+    .toolbar-title {
+      margin-bottom: 3px;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .toolbar-subtitle {
+      margin-bottom: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .field {
+      display: grid;
+      gap: 5px;
+    }
+
+    .field span {
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 700;
+    }
+
+    select {
+      min-height: 38px;
+      min-width: 116px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--ink);
+      padding: 8px 34px 8px 10px;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(120px, 1fr));
+      gap: 10px;
+    }
+
+    .kpi {
+      min-height: 96px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .kpi-label {
+      margin-bottom: 12px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    .kpi-value {
+      font-size: 1.65rem;
+      font-weight: 850;
+      line-height: 1;
+    }
+
+    .kpi-note {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    .report-section {
+      display: grid;
+      gap: 16px;
+      padding: 24px 0 8px;
+      border-top: 1px solid var(--line);
+    }
+
+    .section-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .section-copy {
+      margin-bottom: 0;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .legend {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 14px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .swatch {
+      width: 13px;
+      height: 13px;
+      border-radius: 3px;
+      background: var(--new-color);
+    }
+
+    .swatch.existing {
+      background: var(--existing-color);
+    }
+
+    .chart-wrap {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 16px;
+      overflow: hidden;
+    }
+
+    .chart-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .chart-title-row h3 {
+      margin-bottom: 0;
+    }
+
+    .chart-empty {
+      min-height: 220px;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      background: var(--soft);
+      border-radius: 8px;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .line-chart {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .chart-series .series-line {
+      transition: opacity 0.16s ease, stroke-width 0.16s ease, filter 0.16s ease;
+    }
+
+    .chart-series .series-point {
+      transition: opacity 0.16s ease, r 0.16s ease;
+    }
+
+    .chart-series .series-hit {
+      cursor: crosshair;
+      pointer-events: stroke;
+    }
+
+    .line-chart.is-hovering .chart-series:not(.is-active) .series-line,
+    .line-chart.is-hovering .chart-series:not(.is-active) .series-point,
+    .line-chart.is-pinned .chart-series:not(.is-active) .series-line,
+    .line-chart.is-pinned .chart-series:not(.is-active) .series-point {
+      opacity: 0.18;
+    }
+
+    .chart-series.is-active .series-line {
+      stroke-width: 5;
+      filter: drop-shadow(0 2px 3px rgba(27, 37, 36, 0.24));
+    }
+
+    .chart-series.is-active .series-point {
+      opacity: 1;
+      r: 5.7;
+    }
+
+    .quantity-bars {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.16s ease;
+    }
+
+    .line-chart.is-hovering .quantity-bars,
+    .line-chart.is-pinned .quantity-bars {
+      opacity: 1;
+    }
+
+    .quantity-bar {
+      fill: var(--quantity-color, var(--new-color));
+      opacity: 0.2;
+      stroke: var(--quantity-color, var(--new-color));
+      stroke-width: 1;
+    }
+
+    .quantity-axis-label {
+      fill: #5f6a67;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .chart-tooltip {
+      position: absolute;
+      z-index: 4;
+      left: 0;
+      top: 0;
+      min-width: 190px;
+      max-width: 340px;
+      display: none;
+      transform: none;
+      border: 1px solid rgba(27, 37, 36, 0.14);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.97);
+      box-shadow: 0 14px 32px rgba(27, 37, 36, 0.16);
+      padding: 13px 14px;
+      color: var(--ink);
+      pointer-events: none;
+    }
+
+    .chart-tooltip.is-visible {
+      display: block;
+    }
+
+    .tooltip-kicker {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 800;
+      line-height: 1.25;
+    }
+
+    .tooltip-title {
+      display: block;
+      font-size: 0.95rem;
+      font-weight: 850;
+      line-height: 1.35;
+    }
+
+    .tooltip-metric {
+      display: block;
+      margin-top: 5px;
+      color: var(--new-color);
+      font-size: 1.05rem;
+      font-weight: 900;
+      line-height: 1.2;
+    }
+
+    .tooltip-sub {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .tooltip-product {
+      display: grid;
+      grid-template-columns: 58px minmax(0, 1fr);
+      align-items: center;
+      gap: 10px;
+    }
+
+    .tooltip-product img {
+      width: 58px;
+      height: 58px;
+      object-fit: contain;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #ffffff;
+    }
+
+    .axis text,
+    .point-label {
+      fill: #5f6a67;
+      font-size: 12px;
+    }
+
+    .axis line,
+    .axis > path,
+    .grid-line {
+      stroke: #d9e0da;
+      stroke-width: 1;
+      shape-rendering: crispEdges;
+    }
+
+    .chart-legend {
+      display: flex;
+      gap: 10px 18px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .chart-legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .mini-line {
+      width: 18px;
+      height: 4px;
+      border-radius: 2px;
+      background: currentColor;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 840px;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--line);
+      padding: 11px 12px;
+      text-align: left;
+      vertical-align: top;
+      white-space: nowrap;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: #f9faf6;
+      color: #46504e;
+      font-size: 0.78rem;
+      font-weight: 850;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .name-cell {
+      max-width: 260px;
+      white-space: normal;
+      font-weight: 800;
+      line-height: 1.45;
+    }
+
+    .subline {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 600;
+    }
+
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .ratio-cell {
+      min-width: 132px;
+      display: grid;
+      gap: 7px;
+    }
+
+    .ratio-bar {
+      width: 100%;
+      height: 8px;
+      display: flex;
+      overflow: hidden;
+      border-radius: 99px;
+      background: #ebeee9;
+    }
+
+    .ratio-new {
+      background: var(--new-color);
+    }
+
+    .ratio-existing {
+      background: var(--existing-color);
+    }
+
+    .ratio-text {
+      color: var(--ink);
+      font-size: 0.82rem;
+      font-weight: 800;
+      line-height: 1.25;
+    }
+
+    .ratio-total {
+      color: var(--muted);
+      font-size: 0.75rem;
+      line-height: 1.2;
+    }
+
+    .split-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .ranking-table {
+      min-width: 880px;
+    }
+
+    .action-table {
+      min-width: 980px;
+    }
+
+    .action-td {
+      min-width: 230px;
+      border-left: 4px solid transparent;
+    }
+
+    .action-td.is-acquisition {
+      border-left-color: #129064;
+      background: #e8f7ef;
+    }
+
+    .action-td.is-recovery {
+      border-left-color: #f97316;
+      background: #fff0dd;
+    }
+
+    .action-td.is-retention {
+      border-left-color: #4f6ee8;
+      background: #edf1ff;
+    }
+
+    .action-cell {
+      min-width: 210px;
+      display: grid;
+      gap: 6px;
+      white-space: normal;
+    }
+
+    .action-badge {
+      width: fit-content;
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: #eef7f2;
+      color: #216347;
+      font-size: 0.75rem;
+      font-weight: 900;
+      line-height: 1.2;
+    }
+
+    .action-badge.is-recovery {
+      background: #fff4e7;
+      color: #9a4d12;
+    }
+
+    .action-badge.is-retention {
+      background: #eef2ff;
+      color: #344d9a;
+    }
+
+    .action-none {
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    .action-reason {
+      display: block;
+      color: var(--muted);
+      font-size: 0.74rem;
+      font-weight: 650;
+      line-height: 1.45;
+    }
+
+    .priority-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 36px;
+      border-radius: 999px;
+      padding: 4px 8px;
+      background: #f1f4ef;
+      color: var(--ink);
+      font-size: 0.74rem;
+      font-weight: 900;
+    }
+
+    .score-stack {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .score-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 76px;
+      border-radius: 999px;
+      padding: 4px 8px;
+      background: #ffffff;
+      border: 1px solid var(--line);
+      color: var(--ink);
+      font-size: 0.74rem;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .action-empty {
+      padding: 16px;
+      color: var(--muted);
+      font-size: 0.86rem;
+      font-weight: 700;
+    }
+
+    .action-panel-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      background: #ffffff;
+    }
+
+    .action-panel-head h3 {
+      margin-bottom: 0;
+      font-size: 1rem;
+    }
+
+    .action-panel-head span {
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 750;
+    }
+
+    .color-drill-list {
+      display: grid;
+      gap: 0;
+      background: #ffffff;
+    }
+
+    .color-drill-card {
+      border-bottom: 1px solid var(--line);
+    }
+
+    .color-drill-card:last-child {
+      border-bottom: 0;
+    }
+
+    .color-drill-card summary {
+      cursor: pointer;
+      display: grid;
+      grid-template-columns: minmax(180px, 1.2fr) repeat(4, minmax(90px, auto));
+      align-items: center;
+      gap: 12px;
+      padding: 13px 16px;
+      list-style: none;
+    }
+
+    .color-drill-card summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .color-chip {
+      width: fit-content;
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      border-radius: 999px;
+      padding: 5px 11px;
+      background: #f1f4ef;
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 900;
+      line-height: 1.2;
+    }
+
+    .color-chip.is-black_dark {
+      background: #26302e;
+      color: #ffffff;
+    }
+
+    .color-chip.is-blue_green {
+      background: #dff3f5;
+      color: #17616f;
+    }
+
+    .color-chip.is-pink_red {
+      background: #ffe7ee;
+      color: #a3274c;
+    }
+
+    .color-chip.is-beige_brown {
+      background: #f5eadb;
+      color: #7a542c;
+    }
+
+    .color-chip.is-gray_silver {
+      background: #e9ecef;
+      color: #4c575f;
+    }
+
+    .color-chip.is-white_light {
+      background: #ffffff;
+      border: 1px solid #d9e0da;
+      color: #4d5a57;
+    }
+
+    .color-chip.is-other {
+      background: #f1f4ef;
+      color: var(--muted);
+    }
+
+    .color-summary-metric {
+      color: var(--ink);
+      font-size: 0.82rem;
+      font-weight: 850;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .color-model-table {
+      width: 100%;
+      min-width: 1040px;
+      border-top: 1px solid var(--line);
+    }
+
+    .product-cell {
+      min-width: 260px;
+      white-space: normal;
+    }
+
+    .product-preview {
+      display: grid;
+      grid-template-columns: 64px minmax(0, 1fr);
+      align-items: center;
+      gap: 10px;
+      min-height: 68px;
+    }
+
+    .product-image-box {
+      width: 64px;
+      height: 64px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #ffffff;
+    }
+
+    .product-image-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .product-image-box .thumb-fallback {
+      display: none;
+      color: var(--muted);
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-align: center;
+      line-height: 1.25;
+      padding: 6px;
+    }
+
+    .product-image-box.is-missing img {
+      display: none;
+    }
+
+    .product-image-box.is-missing .thumb-fallback {
+      display: block;
+    }
+
+    .product-name {
+      display: block;
+      color: var(--ink);
+      font-size: 0.86rem;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .product-price {
+      display: block;
+      margin-top: 4px;
+      color: var(--accent-2);
+      font-size: 0.84rem;
+      font-weight: 850;
+      line-height: 1.25;
+    }
+
+    .product-link {
+      display: inline-block;
+      margin-top: 5px;
+      color: var(--accent-3);
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .rank-bar {
+      width: 150px;
+      height: 8px;
+      overflow: hidden;
+      border-radius: 99px;
+      background: #ebeee9;
+    }
+
+    .rank-bar span {
+      display: block;
+      height: 100%;
+      background: var(--accent-3);
+    }
+
+    .export-header {
+      display: none;
+    }
+
+    .exported .no-export,
+    .exported .upload-band,
+    .exported .topbar,
+    .exported .message {
+      display: none !important;
+    }
+
+    .exported .export-header {
+      display: block;
+      padding: 8px 0 22px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    @media (max-width: 980px) {
+      .app {
+        padding: 20px;
+      }
+
+      .topbar,
+      .report-toolbar,
+      .section-head,
+      .chart-title-row {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .actions,
+      .controls,
+      .legend {
+        justify-content: flex-start;
+      }
+
+      .kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .split-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .app {
+        padding: 16px;
+      }
+
+      .upload-band {
+        padding: 24px 18px;
+      }
+
+      .kpi-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .file-button,
+      .ghost-button,
+      .primary-button,
+      select {
+        width: 100%;
+      }
+
+      .field {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar no-export">
+      <div>
+        <p class="eyebrow">AW order campaign report</p>
+        <h1>注文×キャンペーン利用レポート</h1>
+      </div>
+      <div class="actions">
+        <label class="file-button">
+          CSV / Excelを選択
+          <input id="csvFile" type="file" accept=".csv,.xlsx,.xlsm,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel.sheet.macroEnabled.12">
+        </label>
+      </div>
+    </header>
+
+    <section id="dropZone" class="upload-band no-export" aria-label="データアップロード">
+      <div class="upload-mark">DATA</div>
+      <div>
+        <p class="upload-title">【AW】注文×キャンペーン利用データ</p>
+        <p class="upload-copy">CSVまたはExcel（.xlsx）をドロップ、または右上から選択</p>
+      </div>
+    </section>
+
+    <div id="message" class="message" role="status"></div>
+
+    <section id="report" class="report" hidden>
+      <div class="export-header">
+        <p class="eyebrow">AW order campaign report</p>
+        <h1>注文×キャンペーン利用レポート</h1>
+        <p id="exportMeta" class="toolbar-subtitle"></p>
+      </div>
+
+      <div class="report-toolbar no-export">
+        <div class="toolbar-meta">
+          <p id="sourceName" class="toolbar-title"></p>
+          <p id="sourceMeta" class="toolbar-subtitle"></p>
+        </div>
+        <div class="controls">
+          <label class="field">
+            <span>集計基準</span>
+            <select id="metricSelect"></select>
+          </label>
+          <label class="field">
+            <span>ブランド表示</span>
+            <select id="brandTopSelect">
+              <option value="5">上位5</option>
+              <option value="8" selected>上位8</option>
+              <option value="12">上位12</option>
+              <option value="20">上位20</option>
+            </select>
+          </label>
+          <button id="exportButton" class="ghost-button" type="button">HTML保存</button>
+        </div>
+      </div>
+
+      <div id="kpiGrid" class="kpi-grid"></div>
+
+      <section class="report-section">
+        <div class="section-head">
+          <div>
+            <h2>ブランド月別傾向</h2>
+            <p class="section-copy">ブランドごとの新規比率と既存比率を月別に集計</p>
+          </div>
+          <div class="legend" aria-label="凡例">
+            <span class="legend-item"><span class="swatch"></span>新規</span>
+            <span class="legend-item"><span class="swatch existing"></span>既存</span>
+          </div>
+        </div>
+        <div id="brandChart" class="chart-wrap"></div>
+        <div id="brandMatrix" class="table-wrap"></div>
+      </section>
+
+      <section class="report-section">
+        <div class="section-head">
+          <div>
+            <h2>ブランド配下 型番月別傾向</h2>
+            <p class="section-copy">選択ブランドの上位型番について新規比率と既存比率を月別に集計</p>
+          </div>
+          <div class="controls no-export">
+            <label class="field">
+              <span>ブランド</span>
+              <select id="brandSelect"></select>
+            </label>
+            <label class="field">
+              <span>型番表示</span>
+              <select id="modelTopSelect">
+                <option value="5">上位5</option>
+                <option value="8" selected>上位8</option>
+                <option value="12">上位12</option>
+                <option value="20">上位20</option>
+              </select>
+            </label>
+          </div>
+        </div>
+        <div class="split-layout">
+          <div id="modelChart" class="chart-wrap"></div>
+          <div id="modelRanking" class="table-wrap"></div>
+        </div>
+        <div id="modelActions" class="table-wrap"></div>
+        <div id="colorDrilldown" class="table-wrap"></div>
+        <div id="modelMatrix" class="table-wrap"></div>
+      </section>
+    </section>
+  </main>
+
+  <script src="aw_product_catalog.js"></script>
+  <script>
+    const state = {
+      fileName: "",
+      records: [],
+      skippedRows: 0,
+      excludedSegments: 0,
+      columns: {},
+      months: [],
+      metric: "quantity",
+      topBrands: 8,
+      topModels: 8,
+      selectedBrand: "",
+      sourceSheetName: "",
+      sourceUpdatedAt: ""
+    };
+
+    const segmentLabels = {
+      new: "新規",
+      existing: "既存"
+    };
+
+    const colorGroups = [
+      {
+        value: "black_dark",
+        label: "ブラック/ダーク",
+        patterns: ["ブラック", "黒", "チャコール", "ダーク", "スミ", "墨"]
+      },
+      {
+        value: "blue_green",
+        label: "ブルー/グリーン",
+        patterns: ["ブルー", "青", "ネイビー", "紺", "サックス", "ターコイズ", "グリーン", "緑", "ミント", "カーキ"]
+      },
+      {
+        value: "pink_red",
+        label: "ピンク/レッド",
+        patterns: ["ピンク", "桃", "レッド", "赤", "ワイン", "ボルドー", "ローズ", "コーラル"]
+      },
+      {
+        value: "beige_brown",
+        label: "ベージュ/ブラウン",
+        patterns: ["ベージュ", "ブラウン", "茶", "キャメル", "バーチ", "アイボリー", "クリーム", "オレンジ", "イエロー", "黄", "ゴールド"]
+      },
+      {
+        value: "gray_silver",
+        label: "グレー/シルバー",
+        patterns: ["グレー", "グレイ", "灰", "シルバー", "銀", "パール"]
+      },
+      {
+        value: "white_light",
+        label: "ホワイト/ライト",
+        patterns: ["ホワイト", "白", "オフホワイト"]
+      }
+    ];
+    const otherColorGroup = {
+      value: "other",
+      label: "その他/未分類"
+    };
+
+    const palette = [
+      "#007c78",
+      "#c4662f",
+      "#435a92",
+      "#8b6d28",
+      "#b04768",
+      "#32835b",
+      "#735ca8",
+      "#60737b",
+      "#b85c3f",
+      "#2d7a9a",
+      "#7a7442",
+      "#8d5d78"
+    ];
+
+    const productMetaCache = new Map();
+    const productMetaRequests = new Set();
+    const seededProductCatalog = window.AW_PRODUCT_CATALOG || {};
+
+    const els = {};
+
+    document.addEventListener("DOMContentLoaded", () => {
+      [
+        "csvFile",
+        "dropZone",
+        "message",
+        "report",
+        "sourceName",
+        "sourceMeta",
+        "exportMeta",
+        "metricSelect",
+        "brandTopSelect",
+        "modelTopSelect",
+        "brandSelect",
+        "exportButton",
+        "kpiGrid",
+        "brandChart",
+        "brandMatrix",
+        "modelChart",
+        "modelRanking",
+        "modelActions",
+        "colorDrilldown",
+        "modelMatrix"
+      ].forEach((id) => {
+        els[id] = document.getElementById(id);
+      });
+
+      els.csvFile.addEventListener("change", (event) => {
+        const file = event.target.files && event.target.files[0];
+        if (file) {
+          loadDataFile(file);
+        }
+      });
+
+      els.dropZone.addEventListener("dragover", (event) => {
+        event.preventDefault();
+        els.dropZone.classList.add("is-dragging");
+      });
+
+      els.dropZone.addEventListener("dragleave", () => {
+        els.dropZone.classList.remove("is-dragging");
+      });
+
+      els.dropZone.addEventListener("drop", (event) => {
+        event.preventDefault();
+        els.dropZone.classList.remove("is-dragging");
+        const file = event.dataTransfer.files && event.dataTransfer.files[0];
+        if (file) {
+          loadDataFile(file);
+        }
+      });
+
+      els.metricSelect.addEventListener("change", () => {
+        state.metric = els.metricSelect.value;
+        renderReport();
+      });
+
+      els.brandTopSelect.addEventListener("change", () => {
+        state.topBrands = Number(els.brandTopSelect.value);
+        renderReport();
+      });
+
+      els.modelTopSelect.addEventListener("change", () => {
+        state.topModels = Number(els.modelTopSelect.value);
+        renderModelSection();
+      });
+
+      els.brandSelect.addEventListener("change", () => {
+        state.selectedBrand = els.brandSelect.value;
+        renderModelSection();
+      });
+
+      els.exportButton.addEventListener("click", exportCurrentReport);
+    });
+
+    async function loadDataFile(file) {
+      try {
+        setMessage(`${file.name} を読み込んでいます。`, "info");
+        const source = await readSourceRows(file);
+        const detected = source.detected || detectHeader(source.rows);
+        if (!detected) {
+          throw new Error("必要な列が見つかりません。日付、顧客区分、ブランド名、品番を含むCSVまたはExcelを選択してください。");
+        }
+
+        const result = buildRecords(source.rows, detected);
+        if (!result.records.length) {
+          throw new Error("新規・既存として集計できる行がありません。顧客区分の値を確認してください。");
+        }
+
+        state.fileName = file.name;
+        state.records = result.records;
+        state.skippedRows = result.skippedRows;
+        state.excludedSegments = result.excludedSegments;
+        state.columns = detected.columns;
+        state.months = [...new Set(result.records.map((record) => record.month))].sort();
+        state.metric = detected.columns.quantity == null ? "rows" : "quantity";
+        state.sourceSheetName = source.sheetName || "";
+        state.sourceUpdatedAt = formatDateTime(new Date());
+        state.selectedBrand = "";
+
+        buildMetricOptions(detected.columns);
+        els.metricSelect.value = state.metric;
+        els.report.hidden = false;
+        setMessage("", "");
+        renderReport();
+      } catch (error) {
+        els.report.hidden = true;
+        setMessage(error.message || "ファイルの読み込みに失敗しました。", "error");
+      }
+    }
+
+    async function readSourceRows(file) {
+      const lowerName = file.name.toLowerCase();
+      if (lowerName.endsWith(".xlsx") || lowerName.endsWith(".xlsm")) {
+        return readXlsxRows(file);
+      }
+      if (lowerName.endsWith(".xls")) {
+        throw new Error("古いExcel形式（.xls）は未対応です。.xlsx形式で保存し直してアップロードしてください。");
+      }
+
+      const buffer = await file.arrayBuffer();
+      const text = decodeText(buffer);
+      return {
+        rows: parseCsv(text),
+        sheetName: "",
+        detected: null
+      };
+    }
+
+    async function readXlsxRows(file) {
+      if (typeof DecompressionStream !== "function") {
+        throw new Error("このブラウザではExcelファイルを直接展開できません。ChromeまたはEdgeで開くか、CSVに変換してアップロードしてください。");
+      }
+      if (typeof DOMParser !== "function") {
+        throw new Error("このブラウザではExcelのXMLを読み取れません。CSVに変換してアップロードしてください。");
+      }
+
+      const zip = await createZipReader(await file.arrayBuffer());
+      const sharedStrings = await readSharedStrings(zip);
+      const sheets = await readWorkbookSheets(zip);
+      if (!sheets.length) {
+        throw new Error("Excel内に読み取れるシートが見つかりませんでした。");
+      }
+
+      const candidates = prioritizeSheets(sheets);
+      for (const sheet of candidates) {
+        const rows = await readWorksheetRows(zip, sheet.path, sharedStrings);
+        const detected = detectHeader(rows);
+        if (detected) {
+          return {
+            rows,
+            sheetName: sheet.name,
+            detected
+          };
+        }
+      }
+
+      throw new Error("Excel内に対象列（日付、顧客区分、ブランド名、品番）があるシートが見つかりませんでした。");
+    }
+
+    async function createZipReader(buffer) {
+      const bytes = new Uint8Array(buffer);
+      const view = new DataView(buffer);
+      const centralDirectory = findCentralDirectory(view);
+      const entries = new Map();
+      let offset = centralDirectory.offset;
+      const end = centralDirectory.offset + centralDirectory.size;
+
+      while (offset < end) {
+        if (view.getUint32(offset, true) !== 0x02014b50) {
+          throw new Error("Excelファイルの中身を読み取れませんでした。");
+        }
+
+        const flags = view.getUint16(offset + 8, true);
+        const method = view.getUint16(offset + 10, true);
+        const compressedSize = view.getUint32(offset + 20, true);
+        const uncompressedSize = view.getUint32(offset + 24, true);
+        const nameLength = view.getUint16(offset + 28, true);
+        const extraLength = view.getUint16(offset + 30, true);
+        const commentLength = view.getUint16(offset + 32, true);
+        const localHeaderOffset = view.getUint32(offset + 42, true);
+        const nameStart = offset + 46;
+        const nameBytes = bytes.slice(nameStart, nameStart + nameLength);
+        const name = normalizeZipPath(decodeZipName(nameBytes, flags));
+
+        entries.set(name, {
+          method,
+          compressedSize,
+          uncompressedSize,
+          localHeaderOffset
+        });
+
+        offset += 46 + nameLength + extraLength + commentLength;
+      }
+
+      return {
+        has(path) {
+          return entries.has(normalizeZipPath(path));
+        },
+        async bytes(path) {
+          const entry = entries.get(normalizeZipPath(path));
+          if (!entry) {
+            throw new Error(`${path} がExcelファイル内に見つかりません。`);
+          }
+          if (view.getUint32(entry.localHeaderOffset, true) !== 0x04034b50) {
+            throw new Error("Excelファイル内のシート情報を読み取れませんでした。");
+          }
+
+          const nameLength = view.getUint16(entry.localHeaderOffset + 26, true);
+          const extraLength = view.getUint16(entry.localHeaderOffset + 28, true);
+          const dataStart = entry.localHeaderOffset + 30 + nameLength + extraLength;
+          const compressed = bytes.slice(dataStart, dataStart + entry.compressedSize);
+
+          if (entry.method === 0) {
+            return compressed;
+          }
+          if (entry.method === 8) {
+            return inflateRaw(compressed, entry.uncompressedSize);
+          }
+          throw new Error("このExcelファイルの圧縮形式には対応していません。");
+        },
+        async text(path) {
+          return new TextDecoder("utf-8").decode(await this.bytes(path));
+        }
+      };
+    }
+
+    function findCentralDirectory(view) {
+      const minOffset = Math.max(0, view.byteLength - 22 - 65535);
+      for (let offset = view.byteLength - 22; offset >= minOffset; offset -= 1) {
+        if (view.getUint32(offset, true) === 0x06054b50) {
+          return {
+            size: view.getUint32(offset + 12, true),
+            offset: view.getUint32(offset + 16, true)
+          };
+        }
+      }
+      throw new Error("Excelファイルの形式を確認できませんでした。");
+    }
+
+    function decodeZipName(bytes, flags) {
+      const encoding = flags & 0x0800 ? "utf-8" : "utf-8";
+      return new TextDecoder(encoding).decode(bytes);
+    }
+
+    function normalizeZipPath(path) {
+      const parts = [];
+      String(path)
+        .replace(/\\/g, "/")
+        .replace(/^\/+/, "")
+        .split("/")
+        .forEach((part) => {
+          if (!part || part === ".") {
+            return;
+          }
+          if (part === "..") {
+            parts.pop();
+          } else {
+            parts.push(part);
+          }
+        });
+      return parts.join("/");
+    }
+
+    async function inflateRaw(compressed) {
+      const formats = ["deflate-raw", "deflate"];
+      let lastError = null;
+      for (const format of formats) {
+        try {
+          const stream = new Blob([compressed]).stream().pipeThrough(new DecompressionStream(format));
+          return new Uint8Array(await new Response(stream).arrayBuffer());
+        } catch (error) {
+          lastError = error;
+        }
+      }
+      throw lastError || new Error("Excelファイルを展開できませんでした。");
+    }
+
+    async function readSharedStrings(zip) {
+      if (!zip.has("xl/sharedStrings.xml")) {
+        return [];
+      }
+      const doc = parseXml(await zip.text("xl/sharedStrings.xml"));
+      return [...doc.getElementsByTagName("si")].map((node) => collectTextNodes(node));
+    }
+
+    async function readWorkbookSheets(zip) {
+      const workbook = parseXml(await zip.text("xl/workbook.xml"));
+      const rels = parseXml(await zip.text("xl/_rels/workbook.xml.rels"));
+      const targets = new Map();
+
+      [...rels.getElementsByTagName("Relationship")].forEach((rel) => {
+        targets.set(rel.getAttribute("Id"), rel.getAttribute("Target"));
+      });
+
+      return [...workbook.getElementsByTagName("sheet")]
+        .map((sheet, index) => {
+          const relId = sheet.getAttribute("r:id") ||
+            sheet.getAttributeNS("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "id");
+          const target = targets.get(relId);
+          if (!target) {
+            return null;
+          }
+          return {
+            name: sheet.getAttribute("name") || `Sheet${index + 1}`,
+            path: resolveZipPath("xl", target),
+            order: index
+          };
+        })
+        .filter(Boolean);
+    }
+
+    function prioritizeSheets(sheets) {
+      return [...sheets].sort((a, b) => {
+        const scoreDiff = sheetScore(b.name) - sheetScore(a.name);
+        return scoreDiff || a.order - b.order;
+      });
+    }
+
+    function sheetScore(name) {
+      const text = cleanCell(name);
+      if (text.includes("受注") || text.includes("注文")) {
+        return 4;
+      }
+      if (text.includes("新規") || text.includes("既存")) {
+        return 2;
+      }
+      if (text.includes("詳細")) {
+        return 1;
+      }
+      return 0;
+    }
+
+    function resolveZipPath(baseDir, target) {
+      const normalizedTarget = String(target || "").replace(/\\/g, "/");
+      if (normalizedTarget.startsWith("/")) {
+        return normalizeZipPath(normalizedTarget);
+      }
+      return normalizeZipPath(`${baseDir}/${normalizedTarget}`);
+    }
+
+    async function readWorksheetRows(zip, path, sharedStrings) {
+      const doc = parseXml(await zip.text(path));
+      return [...doc.getElementsByTagName("row")]
+        .map((rowNode) => {
+          const row = [];
+          let fallbackIndex = 0;
+          [...rowNode.getElementsByTagName("c")].forEach((cell) => {
+            const ref = cell.getAttribute("r") || "";
+            const colIndex = ref ? columnLettersToIndex(ref) : fallbackIndex;
+            row[colIndex] = readCellText(cell, sharedStrings);
+            fallbackIndex = colIndex + 1;
+          });
+          return row.map((value) => value == null ? "" : value);
+        })
+        .filter((row) => row.some((cell) => cleanCell(cell) !== ""));
+    }
+
+    function parseXml(text) {
+      const doc = new DOMParser().parseFromString(text, "application/xml");
+      if (doc.getElementsByTagName("parsererror").length) {
+        throw new Error("Excel内のXMLを読み取れませんでした。");
+      }
+      return doc;
+    }
+
+    function readCellText(cell, sharedStrings) {
+      const type = cell.getAttribute("t");
+      if (type === "inlineStr") {
+        return collectTextNodes(cell);
+      }
+
+      const valueNode = cell.getElementsByTagName("v")[0];
+      const rawValue = valueNode ? valueNode.textContent : "";
+      if (type === "s") {
+        return sharedStrings[Number(rawValue)] || "";
+      }
+      if (type === "b") {
+        return rawValue === "1" ? "TRUE" : "FALSE";
+      }
+      return rawValue || collectTextNodes(cell);
+    }
+
+    function collectTextNodes(node) {
+      return [...node.getElementsByTagName("t")]
+        .map((textNode) => textNode.textContent || "")
+        .join("");
+    }
+
+    function columnLettersToIndex(ref) {
+      const match = String(ref).match(/[A-Z]+/i);
+      if (!match) {
+        return 0;
+      }
+      return [...match[0].toUpperCase()].reduce((total, char) => total * 26 + char.charCodeAt(0) - 64, 0) - 1;
+    }
+
+    function decodeText(buffer) {
+      try {
+        return new TextDecoder("utf-8", { fatal: true }).decode(buffer).replace(/^\uFEFF/, "");
+      } catch (error) {
+        return new TextDecoder("shift_jis").decode(buffer).replace(/^\uFEFF/, "");
+      }
+    }
+
+    function parseCsv(text) {
+      const rows = [];
+      let row = [];
+      let field = "";
+      let inQuotes = false;
+
+      for (let index = 0; index < text.length; index += 1) {
+        const char = text[index];
+        const next = text[index + 1];
+
+        if (inQuotes) {
+          if (char === "\"" && next === "\"") {
+            field += "\"";
+            index += 1;
+          } else if (char === "\"") {
+            inQuotes = false;
+          } else {
+            field += char;
+          }
+          continue;
+        }
+
+        if (char === "\"") {
+          inQuotes = true;
+        } else if (char === ",") {
+          row.push(field);
+          field = "";
+        } else if (char === "\n") {
+          row.push(field);
+          rows.push(row);
+          row = [];
+          field = "";
+        } else if (char === "\r") {
+          if (next === "\n") {
+            continue;
+          }
+          row.push(field);
+          rows.push(row);
+          row = [];
+          field = "";
+        } else {
+          field += char;
+        }
+      }
+
+      if (field.length || row.length) {
+        row.push(field);
+        rows.push(row);
+      }
+
+      return rows.filter((csvRow) => csvRow.some((cell) => cleanCell(cell) !== ""));
+    }
+
+    function detectHeader(rows) {
+      const searchLimit = Math.min(rows.length, 40);
+      for (let rowIndex = 0; rowIndex < searchLimit; rowIndex += 1) {
+        const headers = rows[rowIndex].map(normalizeHeader);
+        const columns = {
+          date: findColumn(headers, ["日付", "注文日", "受注日", "購入日"]),
+          segment: findColumn(headers, ["顧客区分", "新規既存区分", "会員区分"]),
+          brand: findColumn(headers, ["ブランド名", "ブランド"]),
+          sku: findColumn(headers, ["品番", "型番", "商品型番", "商品コード"]),
+          quantity: findColumn(headers, ["数量", "注文数量", "購入数量"]),
+          orderId: findColumn(headers, ["取引ID", "注文ID", "受注ID", "注文番号", "受注番号"]),
+          amount: findColumn(headers, ["購入金額", "注文金額", "売上金額", "金額"]),
+          listPriceExTax: findColumn(headers, ["定価(税抜)", "定価税抜", "税抜定価"]),
+          listPriceTaxIn: findColumn(headers, ["定価(税込)", "定価税込", "税込定価"]),
+          unitPrice: findColumn(headers, ["購入単価", "単価"]),
+          productName: findColumn(headers, ["商品名", "商品名称"]),
+          color: findColumn(headers, ["カラー", "色"]),
+          colorCode: findColumn(headers, ["カラーCD", "カラーコード", "色CD", "色コード"])
+        };
+
+        if (
+          columns.date != null &&
+          columns.segment != null &&
+          columns.brand != null &&
+          columns.sku != null
+        ) {
+          return {
+            rowIndex,
+            headers,
+            columns
+          };
+        }
+      }
+      return null;
+    }
+
+    function normalizeHeader(value) {
+      return cleanCell(value)
+        .replace(/\s+/g, "")
+        .replace(/^"|"$/g, "")
+        .toLowerCase();
+    }
+
+    function findColumn(headers, candidates) {
+      const normalizedCandidates = candidates.map((candidate) => normalizeHeader(candidate));
+      for (const candidate of normalizedCandidates) {
+        const exactIndex = headers.findIndex((header) => header === candidate);
+        if (exactIndex >= 0) {
+          return exactIndex;
+        }
+      }
+
+      for (const candidate of normalizedCandidates) {
+        const containsIndex = headers.findIndex((header) => header && header.includes(candidate));
+        if (containsIndex >= 0) {
+          return containsIndex;
+        }
+      }
+
+      return null;
+    }
+
+    function buildRecords(rows, detected) {
+      const records = [];
+      let skippedRows = 0;
+      let excludedSegments = 0;
+      const { columns, rowIndex: headerIndex } = detected;
+
+      rows.slice(headerIndex + 1).forEach((row, offset) => {
+        const date = parseDate(row[columns.date]);
+        const segment = normalizeSegment(row[columns.segment]);
+        const brand = cleanCell(row[columns.brand]);
+        const sku = cleanCell(row[columns.sku]);
+
+        if (!date || !brand || !sku) {
+          skippedRows += 1;
+          return;
+        }
+
+        if (!segment) {
+          excludedSegments += 1;
+          return;
+        }
+
+        const quantityRaw = columns.quantity == null ? null : parseNumber(row[columns.quantity]);
+        const quantity = quantityRaw == null || quantityRaw <= 0 ? 1 : quantityRaw;
+        const orderId = columns.orderId == null ? "" : cleanCell(row[columns.orderId]);
+        const amount = columns.amount == null ? null : parseNumber(row[columns.amount]);
+        const listPriceExTax = columns.listPriceExTax == null ? null : parseNumber(row[columns.listPriceExTax]);
+        const listPriceTaxIn = columns.listPriceTaxIn == null ? null : parseNumber(row[columns.listPriceTaxIn]);
+        const unitPrice = columns.unitPrice == null ? null : parseNumber(row[columns.unitPrice]);
+        const productName = columns.productName == null ? "" : cleanCell(row[columns.productName]);
+        const color = columns.color == null ? "" : cleanCell(row[columns.color]);
+        const colorCode = columns.colorCode == null ? "" : cleanCell(row[columns.colorCode]);
+
+        records.push({
+          rowKey: String(headerIndex + 1 + offset),
+          date,
+          month: monthKey(date),
+          segment,
+          brand,
+          sku,
+          model: normalizeModel(sku),
+          quantity,
+          orderId,
+          amount,
+          listPriceExTax,
+          listPriceTaxIn,
+          unitPrice,
+          productName,
+          color,
+          colorCode,
+          colorGroup: classifyColorGroup(color, colorCode, sku)
+        });
+      });
+
+      return {
+        records,
+        skippedRows,
+        excludedSegments
+      };
+    }
+
+    function cleanCell(value) {
+      if (value == null) {
+        return "";
+      }
+      const text = String(value)
+        .replace(/^\uFEFF/, "")
+        .replace(/\u00a0/g, " ")
+        .trim();
+      if (/^(«\s*null\s*»|null|undefined)$/i.test(text)) {
+        return "";
+      }
+      return text;
+    }
+
+    function parseDate(value) {
+      const text = cleanCell(value);
+      if (!text) {
+        return null;
+      }
+
+      if (/^\d+(\.\d+)?$/.test(text)) {
+        const serial = Number(text);
+        if (serial > 20000 && serial < 80000) {
+          return new Date(Date.UTC(1899, 11, 30 + serial));
+        }
+      }
+
+      const normalized = text
+        .replace(/[年月]/g, "-")
+        .replace(/日/g, "")
+        .replace(/\//g, "-");
+      const match = normalized.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+      if (match) {
+        return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+      }
+
+      const parsed = new Date(text);
+      return Number.isNaN(parsed.getTime()) ? null : parsed;
+    }
+
+    function parseNumber(value) {
+      const text = cleanCell(value);
+      if (!text) {
+        return null;
+      }
+      const normalized = text
+        .replace(/[,\s円￥]/g, "")
+        .replace(/^△/, "-");
+      const number = Number(normalized);
+      return Number.isFinite(number) ? number : null;
+    }
+
+    function normalizeSegment(value) {
+      const text = cleanCell(value);
+      if (text.includes("新規")) {
+        return "new";
+      }
+      if (text.includes("既存")) {
+        return "existing";
+      }
+      return null;
+    }
+
+    function normalizeModel(sku) {
+      const text = cleanCell(sku);
+      const match = text.match(/^([A-Za-z0-9]+(?:[A-Za-z0-9])?)(?:[-_].*)?$/);
+      if (match) {
+        return match[1];
+      }
+      const hyphenIndex = text.indexOf("-");
+      return hyphenIndex > 0 ? text.slice(0, hyphenIndex) : text;
+    }
+
+    function monthKey(date) {
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+    }
+
+    function monthLabel(key) {
+      const [year, month] = key.split("-");
+      return `${year}年${Number(month)}月`;
+    }
+
+    function buildMetricOptions(columns) {
+      const options = [];
+      if (columns.quantity != null) {
+        options.push(["quantity", "数量"]);
+      }
+      options.push(["rows", "明細行"]);
+      if (columns.orderId != null) {
+        options.push(["orders", "注文数"]);
+      }
+      els.metricSelect.innerHTML = options
+        .map(([value, label]) => `<option value="${escapeHtml(value)}">${escapeHtml(label)}</option>`)
+        .join("");
+    }
+
+    function sumRecordQuantity(records) {
+      return records.reduce((sum, record) => sum + (record.quantity || 1), 0);
+    }
+
+    function classifyColorGroup(color, colorCode, sku) {
+      const colorText = [color, colorCode].map(cleanCell).filter(Boolean).join(" ");
+      if (colorText) {
+        const normalized = colorText.toLowerCase();
+        const matched = colorGroups.find((group) =>
+          group.patterns.some((pattern) => normalized.includes(pattern.toLowerCase()))
+        );
+        if (matched) {
+          return matched.value;
+        }
+      }
+
+      const code = extractColorCode(colorCode || sku);
+      if (/^00[1-9]/.test(code)) {
+        return "black_dark";
+      }
+      if (/^0/.test(code)) {
+        return "gray_silver";
+      }
+      if (/^1/.test(code)) {
+        return "white_light";
+      }
+      if (/^2/.test(code) || /^8/.test(code)) {
+        return "beige_brown";
+      }
+      if (/^[345]/.test(code)) {
+        return "blue_green";
+      }
+      if (/^[67]/.test(code)) {
+        return "pink_red";
+      }
+      return otherColorGroup.value;
+    }
+
+    function extractColorCode(value) {
+      const text = cleanCell(value);
+      if (!text) {
+        return "";
+      }
+      const skuMatch = text.match(/[-_](\d{3})(?:\D|$)/);
+      if (skuMatch) {
+        return skuMatch[1];
+      }
+      const codeMatch = text.match(/\b(\d{3})\b/);
+      return codeMatch ? codeMatch[1] : "";
+    }
+
+    function renderReport() {
+      const records = state.records;
+      const brandTotals = getBrandTotals(records);
+      if (!state.selectedBrand || !brandTotals.some((item) => item.name === state.selectedBrand)) {
+        state.selectedBrand = brandTotals[0] ? brandTotals[0].name : "";
+      }
+
+      renderToolbar(brandTotals, records);
+      renderKpis(brandTotals, records);
+      renderBrandSection(brandTotals, records);
+      renderBrandSelector(brandTotals);
+      renderModelSection(records);
+    }
+
+    function renderToolbar(brandTotals, records) {
+      const totalValue = sumBuckets(brandTotals);
+      els.sourceName.textContent = state.fileName;
+      const metaParts = [
+        state.sourceSheetName ? `シート: ${state.sourceSheetName}` : "",
+        `${records.length.toLocaleString("ja-JP")}行`,
+        `${state.months.map(monthLabel).join(" - ")}`,
+        `${metricLabel()} ${formatNumber(totalValue)}`
+      ].filter(Boolean);
+      els.sourceMeta.textContent = metaParts.join(" / ");
+      els.exportMeta.textContent = `${state.fileName}${state.sourceSheetName ? ` / ${state.sourceSheetName}` : ""} / ${state.sourceUpdatedAt} / ${metricLabel()}集計`;
+    }
+
+    function renderKpis(brandTotals, records) {
+      const totals = aggregate(records, ["segment"], state.metric);
+      const newTotal = getSingleBucketValue(totals, ["new"]);
+      const existingTotal = getSingleBucketValue(totals, ["existing"]);
+      const total = newTotal + existingTotal;
+      const months = [...new Set(records.map((record) => record.month))].sort();
+      const modelCount = new Set(records.map((record) => record.model)).size;
+      const orderCount = new Set(records.map((record) => record.orderId).filter(Boolean)).size;
+      const kpis = [
+        ["対象月", `${months.length}`, months.length ? months.map(monthLabel).join(" - ") : "-"],
+        ["ブランド", `${brandTotals.length}`, "新規・既存対象"],
+        ["型番", `${modelCount}`, "品番のハイフン前で集約"],
+        [`${metricLabel()}合計`, formatNumber(total), `新規 ${formatPercent(newTotal, total)} / 既存 ${formatPercent(existingTotal, total)}`],
+        ["注文ID", orderCount ? formatNumber(orderCount) : "-", `対象外 ${formatNumber(state.excludedSegments)}行`]
+      ];
+
+      els.kpiGrid.innerHTML = kpis
+        .map(([label, value, note]) => `
+          <div class="kpi">
+            <div class="kpi-label">${escapeHtml(label)}</div>
+            <div class="kpi-value">${escapeHtml(value)}</div>
+            <div class="kpi-note">${escapeHtml(note)}</div>
+          </div>
+        `)
+        .join("");
+    }
+
+    function renderBrandSection(brandTotals, records) {
+      const topBrands = brandTotals.slice(0, state.topBrands);
+      const monthly = aggregate(records, ["brand", "month"], state.metric);
+      const monthlyQuantity = aggregate(records, ["brand", "month"], "quantity");
+      const series = topBrands.map((brand, index) => ({
+        name: brand.name,
+        color: palette[index % palette.length],
+        tooltipType: "brand",
+        values: state.months.map((month) => {
+          const bucket = getBucket(monthly, [brand.name, month]);
+          return bucket.total > 0 ? bucket.newValue / bucket.total : null;
+        }),
+        totals: state.months.map((month) => getBucket(monthly, [brand.name, month]).total),
+        quantityTotals: state.months.map((month) => getBucket(monthlyQuantity, [brand.name, month]).total)
+      }));
+
+      renderLineChart(els.brandChart, "上位ブランド 新規比率", series, state.months, { tooltipType: "brand" });
+      renderMatrixTable(els.brandMatrix, topBrands, state.months, (brand, month) => getBucket(monthly, [brand.name, month]), "ブランド");
+    }
+
+    function renderBrandSelector(brandTotals) {
+      const options = brandTotals
+        .map((brand) => `<option value="${escapeHtml(brand.name)}">${escapeHtml(brand.name)}</option>`)
+        .join("");
+      els.brandSelect.innerHTML = options;
+      els.brandSelect.value = state.selectedBrand;
+    }
+
+    function renderModelSection(records = state.records) {
+      if (!records.length || !state.selectedBrand) {
+        renderEmpty(els.modelChart, "ブランドを選択してください。");
+        els.modelRanking.innerHTML = "";
+        els.modelActions.innerHTML = "";
+        els.colorDrilldown.innerHTML = "";
+        els.modelMatrix.innerHTML = "";
+        return;
+      }
+
+      const brandRecords = records.filter((record) => record.brand === state.selectedBrand);
+      const allModelTotals = annotateModelActions(getModelTotals(brandRecords), brandRecords);
+      const modelTotals = allModelTotals.slice(0, state.topModels);
+      const monthly = aggregate(brandRecords, ["model", "month"], state.metric);
+      const monthlyQuantity = aggregate(brandRecords, ["model", "month"], "quantity");
+      const series = modelTotals.map((model, index) => ({
+        name: model.name,
+        color: palette[index % palette.length],
+        tooltipType: "model",
+        product: model.product,
+        values: state.months.map((month) => {
+          const bucket = getBucket(monthly, [model.name, month]);
+          return bucket.total > 0 ? bucket.newValue / bucket.total : null;
+        }),
+        totals: state.months.map((month) => getBucket(monthly, [model.name, month]).total),
+        quantityTotals: state.months.map((month) => getBucket(monthlyQuantity, [model.name, month]).total)
+      }));
+
+      renderLineChart(els.modelChart, `${state.selectedBrand} 上位型番 新規比率`, series, state.months, { tooltipType: "model" });
+      renderModelRanking(els.modelRanking, modelTotals);
+      renderModelActionCandidates(els.modelActions, allModelTotals);
+      const colorRows = getColorDrilldownRows(brandRecords);
+      renderColorDrilldown(els.colorDrilldown, colorRows);
+      renderMatrixTable(els.modelMatrix, modelTotals, state.months, (model, month) => getBucket(monthly, [model.name, month]), "型番", { showProduct: true });
+      hydrateVisibleProductMeta([...modelTotals, ...getActionCandidateRows(allModelTotals), ...colorRows.flatMap((row) => row.models)]);
+    }
+
+    function getBrandTotals(records = state.records) {
+      const grouped = aggregate(records, ["brand"], state.metric);
+      return [...grouped.entries()]
+        .map(([key, bucket]) => ({
+          name: splitKey(key)[0],
+          ...bucket
+        }))
+        .sort(sortByTotal);
+    }
+
+    function getModelTotals(records) {
+      const grouped = aggregate(records, ["model"], state.metric);
+      const skuExamples = new Map();
+      const modelRecords = new Map();
+      records.forEach((record) => {
+        if (!skuExamples.has(record.model)) {
+          skuExamples.set(record.model, new Set());
+        }
+        if (!modelRecords.has(record.model)) {
+          modelRecords.set(record.model, []);
+        }
+        modelRecords.get(record.model).push(record);
+        if (skuExamples.get(record.model).size < 3) {
+          skuExamples.get(record.model).add(record.sku);
+        }
+      });
+
+      return [...grouped.entries()]
+        .map(([key, bucket]) => {
+          const name = splitKey(key)[0];
+          return {
+            name,
+            examples: [...(skuExamples.get(name) || [])],
+            product: buildProductInfo(modelRecords.get(name) || []),
+            ...bucket
+          };
+        })
+        .sort(sortByTotal);
+    }
+
+    function getColorDrilldownRows(records) {
+      const byColor = new Map();
+      records.forEach((record) => {
+        const groupValue = record.colorGroup || classifyColorGroup(record.color, record.colorCode, record.sku);
+        if (!byColor.has(groupValue)) {
+          byColor.set(groupValue, []);
+        }
+        byColor.get(groupValue).push(record);
+      });
+
+      return [...colorGroups, otherColorGroup]
+        .map((group) => {
+          const groupRecords = byColor.get(group.value) || [];
+          if (!groupRecords.length) {
+            return null;
+          }
+          const bucket = createBucket(state.metric);
+          groupRecords.forEach((record) => addRecordToBucket(bucket, record, state.metric));
+          finalizeBucket(bucket, state.metric);
+          return {
+            group,
+            records: groupRecords,
+            bucket,
+            models: getModelTotals(groupRecords).slice(0, state.topModels)
+          };
+        })
+        .filter(Boolean)
+        .sort((a, b) => b.bucket.total - a.bucket.total);
+    }
+
+    function annotateModelActions(models, brandRecords) {
+      const brandBucket = createBucket(state.metric);
+      brandRecords.forEach((record) => addRecordToBucket(brandBucket, record, state.metric));
+      finalizeBucket(brandBucket, state.metric);
+      const monthly = aggregate(brandRecords, ["model", "month"], state.metric);
+      const brandMonthly = aggregate(brandRecords, ["month"], state.metric);
+      const topLineLimit = Math.max(5, state.topModels);
+
+      return models.map((model, index) => ({
+        ...model,
+        rank: index + 1,
+        action: recommendModelAction(model, index + 1, {
+          brandBucket,
+          monthly,
+          brandMonthly,
+          topLineLimit
+        })
+      }));
+    }
+
+    function recommendModelAction(model, rank, context) {
+      const minTotal = state.metric === "orders" ? 8 : 20;
+      const minRecent = state.metric === "orders" ? 3 : 5;
+      const brandTotal = context.brandBucket.total || 0;
+      if (!brandTotal || model.total < minTotal) {
+        return noModelAction();
+      }
+
+      const stats = modelMonthlyStats(model.name, context.monthly, context.brandMonthly);
+      if (stats.activeMonths < 2) {
+        return noModelAction();
+      }
+
+      const brandNewRate = context.brandBucket.newRate || 0;
+      const brandExistingRate = context.brandBucket.existingRate || 0;
+      const newLift = model.newRate - brandNewRate;
+      const existingLift = model.existingRate - brandExistingRate;
+      const recentNewRate = stats.recentTotal > 0 ? stats.recentNewValue / stats.recentTotal : model.newRate;
+      const recentExistingRate = stats.recentTotal > 0 ? 1 - recentNewRate : model.existingRate;
+      const trendIsStable = stats.previousTotal <= 0 || stats.recentTotal >= stats.previousTotal * 0.75;
+      const share = model.total / brandTotal;
+      const commonEvidence = `${metricLabel()} ${formatNumber(model.total)} / ブランド平均との差 ${formatSignedPoints(newLift)}`;
+
+      if (
+        rank > context.topLineLimit &&
+        stats.recentTotal >= minRecent &&
+        newLift >= 0.12 &&
+        trendIsStable
+      ) {
+        const score = newLift * 100 + Math.min(share * 100, 15) + (stats.recentTotal > stats.previousTotal ? 5 : 0);
+        return {
+          type: "acquisition",
+          label: "露出強化で新規獲得",
+          priority: actionPriority(score),
+          score,
+          reason: `上位外だが新規 ${percent(model.newRate)}。${commonEvidence}`
+        };
+      }
+
+      if (
+        existingLift >= 0.08 &&
+        recentExistingRate >= brandExistingRate + 0.08 &&
+        stats.recentTotal >= minRecent
+      ) {
+        const score = existingLift * 100 + Math.min(share * 100, 12) + (recentExistingRate - brandExistingRate) * 50;
+        return {
+          type: "recovery",
+          label: "新規流入を回復",
+          priority: actionPriority(score),
+          score,
+          reason: `既存 ${percent(model.existingRate)}。直近も既存寄りで新規補強余地あり`
+        };
+      }
+
+      if (
+        rank <= context.topLineLimit &&
+        newLift >= 0.08 &&
+        stats.monthsAboveBrand >= Math.min(2, stats.activeMonths)
+      ) {
+        const score = newLift * 100 + Math.min(share * 100, 15) + stats.monthsAboveBrand;
+        return {
+          type: "retention",
+          label: "リピート育成",
+          priority: actionPriority(score),
+          score,
+          reason: `新規 ${percent(model.newRate)} が定常的に高め。既存の買い回り余地あり`
+        };
+      }
+
+      return noModelAction();
+    }
+
+    function modelMonthlyStats(modelName, monthly, brandMonthly) {
+      const buckets = state.months.map((month) => getBucket(monthly, [modelName, month]));
+      const activeBuckets = buckets.filter((bucket) => bucket.total > 0);
+      const recentBuckets = buckets.slice(-3);
+      const previousBuckets = buckets.slice(-6, -3);
+      const recentTotal = sumBuckets(recentBuckets);
+      const previousTotal = sumBuckets(previousBuckets);
+      const recentNewValue = recentBuckets.reduce((sum, bucket) => sum + bucket.newValue, 0);
+      const monthsAboveBrand = buckets.reduce((count, bucket, index) => {
+        if (bucket.total <= 0) {
+          return count;
+        }
+        const brandBucket = getBucket(brandMonthly, [state.months[index]]);
+        return bucket.newRate >= brandBucket.newRate + 0.04 ? count + 1 : count;
+      }, 0);
+
+      return {
+        activeMonths: activeBuckets.length,
+        recentTotal,
+        previousTotal,
+        recentNewValue,
+        monthsAboveBrand
+      };
+    }
+
+    function noModelAction() {
+      return {
+        type: "none",
+        label: "推奨なし",
+        priority: "",
+        score: 0,
+        reason: ""
+      };
+    }
+
+    function actionPriority(score) {
+      if (score >= 24) {
+        return "高";
+      }
+      if (score >= 16) {
+        return "中";
+      }
+      return "低";
+    }
+
+    function formatSignedPoints(value) {
+      const points = value * 100;
+      const sign = points > 0 ? "+" : "";
+      return `${sign}${points.toLocaleString("ja-JP", { maximumFractionDigits: 1 })}pt`;
+    }
+
+    function getActionCandidateRows(rows) {
+      return rows
+        .filter((row) => row.action && row.action.type !== "none")
+        .sort((a, b) => b.action.score - a.action.score || a.rank - b.rank)
+        .slice(0, 12);
+    }
+
+    function buildProductInfo(records) {
+      const sku = mostCommon(records.map((record) => record.sku).filter(Boolean));
+      const dataName = mostCommon(records.map((record) => record.productName).filter(Boolean));
+      const dataPrice = resolveDataPrice(records);
+      return {
+        sku,
+        name: dataName,
+        price: dataPrice,
+        url: productPageUrl(sku),
+        imageUrl: guessProductImageUrl(sku)
+      };
+    }
+
+    function resolveDataPrice(records) {
+      const taxIncludedPrice = mostCommon(records.map((record) => record.listPriceTaxIn).filter((value) => value != null));
+      if (taxIncludedPrice) {
+        return formatYen(taxIncludedPrice);
+      }
+
+      const exTaxPrice = mostCommon(records.map((record) => record.listPriceExTax).filter((value) => value != null));
+      if (exTaxPrice) {
+        return formatYen(Number(exTaxPrice) * 1.1);
+      }
+
+      const unitPrice = mostCommon(records.map((record) => record.unitPrice).filter((value) => value != null));
+      return unitPrice ? formatYen(unitPrice) : "";
+    }
+
+    function mostCommon(values) {
+      const counts = new Map();
+      values.forEach((value) => {
+        const cleanValue = cleanCell(value);
+        if (cleanValue) {
+          counts.set(cleanValue, (counts.get(cleanValue) || 0) + 1);
+        }
+      });
+      return [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "ja"))[0]?.[0] || "";
+    }
+
+    function productPageUrl(sku) {
+      return sku ? `https://walking.asics.com/items/${encodeURIComponent(sku)}` : "";
+    }
+
+    function guessProductImageUrl(sku) {
+      const text = cleanCell(sku);
+      const color = text.includes("-") ? text.split("-").pop() : "";
+      if (!text || !color) {
+        return "";
+      }
+      return `https://walking.asics.com/images/item/${encodeURIComponent(text)}/${encodeURIComponent(text)}_c${encodeURIComponent(color)}_a003_pm.jpg`;
+    }
+
+    function resolveProductInfo(product) {
+      if (!product || !product.sku) {
+        return {
+          sku: "",
+          name: "",
+          price: "",
+          url: "",
+          imageUrl: ""
+        };
+      }
+      const cached = productMetaCache.get(product.sku) || {};
+      const seeded = seededProductCatalog[product.sku] || {};
+      return {
+        ...product,
+        name: cached.name || seeded.name || product.name || (cached.status === "loading" ? "商品名取得中" : "ECサイトで確認"),
+        price: cached.price || seeded.price || product.price || "",
+        imageUrl: cached.imageUrl || seeded.imageUrl || product.imageUrl,
+        url: cached.url || product.url
+      };
+    }
+
+    function hydrateVisibleProductMeta(rows) {
+      if (typeof fetch !== "function") {
+        return;
+      }
+
+      rows.forEach((row) => {
+        const sku = row.product?.sku;
+        const url = row.product?.url;
+        if (!sku || !url || seededProductCatalog[sku]?.name || productMetaCache.has(sku) || productMetaRequests.has(sku)) {
+          return;
+        }
+
+        productMetaRequests.add(sku);
+        productMetaCache.set(sku, { status: "loading" });
+        fetch(url, { credentials: "omit" })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("product page unavailable");
+            }
+            return response.text();
+          })
+          .then((html) => {
+            productMetaCache.set(sku, {
+              status: "ready",
+              ...parseProductMeta(html, sku, url)
+            });
+            renderModelSection();
+          })
+          .catch(() => {
+            productMetaCache.set(sku, { status: "blocked" });
+          });
+      });
+    }
+
+    function parseProductMeta(html, sku, url) {
+      const jsonProduct = extractJsonLdProduct(html, sku);
+      const title = jsonProduct.name ||
+        extractMetaContent(html, "og:title") ||
+        extractMetaContent(html, "twitter:title") ||
+        extractTitle(html) ||
+        "";
+      const imageUrl = extractMetaContent(html, "og:image") ||
+        extractMetaContent(html, "twitter:image") ||
+        jsonProduct.imageUrl ||
+        guessProductImageUrl(sku);
+      return {
+        name: cleanProductTitle(title, sku),
+        price: jsonProduct.price ? formatYen(jsonProduct.price) : "",
+        imageUrl,
+        url
+      };
+    }
+
+    function extractMetaContent(html, key) {
+      const escapedKey = escapeRegExp(key);
+      const patterns = [
+        new RegExp(`<meta[^>]+(?:property|name)=["']${escapedKey}["'][^>]+content=["']([^"']+)["']`, "i"),
+        new RegExp(`<meta[^>]+content=["']([^"']+)["'][^>]+(?:property|name)=["']${escapedKey}["']`, "i")
+      ];
+      for (const pattern of patterns) {
+        const match = String(html).match(pattern);
+        if (match) {
+          return decodeHtmlEntities(match[1]);
+        }
+      }
+      return "";
+    }
+
+    function extractTitle(html) {
+      const match = String(html).match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+      return match ? decodeHtmlEntities(match[1]) : "";
+    }
+
+    function extractJsonLdProduct(html, sku) {
+      const scripts = [...String(html).matchAll(/<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)];
+      const products = [];
+      scripts.forEach((match) => {
+        try {
+          collectJsonLdProducts(JSON.parse(decodeHtmlEntities(match[1]).trim()), products);
+        } catch (error) {
+          // Ignore malformed JSON-LD blocks.
+        }
+      });
+
+      const product = products.find((item) => [item.mpn, item.inProductGroupWithID, item.productID].some((value) => cleanCell(value) === sku)) ||
+        products[0] ||
+        {};
+      const offer = Array.isArray(product.offers) ? product.offers[0] : product.offers || {};
+      const rawImage = Array.isArray(product.image) ? product.image[0] : product.image;
+      return {
+        name: cleanCell(product.name),
+        imageUrl: cleanCell(rawImage),
+        price: offer && offer.price != null ? offer.price : ""
+      };
+    }
+
+    function collectJsonLdProducts(value, products) {
+      if (!value) {
+        return;
+      }
+      if (Array.isArray(value)) {
+        value.forEach((item) => collectJsonLdProducts(item, products));
+        return;
+      }
+      if (typeof value !== "object") {
+        return;
+      }
+      const type = value["@type"];
+      const types = Array.isArray(type) ? type : [type];
+      if (types.includes("Product")) {
+        products.push(value);
+      }
+      Object.values(value).forEach((item) => {
+        if (item && typeof item === "object") {
+          collectJsonLdProducts(item, products);
+        }
+      });
+    }
+
+    function cleanProductTitle(title, sku) {
+      const text = cleanCell(title)
+        .replace(new RegExp(`\\s*[（(]${escapeRegExp(sku)}[）)]\\s*`, "i"), " ")
+        .replace(/\s+/g, " ")
+        .trim();
+      return text.split(",")[0].trim();
+    }
+
+    function formatYen(value) {
+      const number = Number(String(value).replace(/[^\d.-]/g, ""));
+      if (!Number.isFinite(number)) {
+        return cleanCell(value);
+      }
+      return `¥${Math.round(number).toLocaleString("ja-JP")}`;
+    }
+
+    function decodeHtmlEntities(value) {
+      const text = String(value);
+      if (typeof document !== "undefined" && document.createElement) {
+        const textarea = document.createElement("textarea");
+        textarea.innerHTML = text;
+        if (typeof textarea.value === "string") {
+          return textarea.value;
+        }
+      }
+      return text
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .replace(/&quot;/g, "\"")
+        .replace(/&#039;/g, "'")
+        .replace(/&apos;/g, "'")
+        .replace(/&amp;/g, "&");
+    }
+
+    function escapeRegExp(value) {
+      return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    }
+
+    function aggregate(records, keys, metric) {
+      const map = new Map();
+      records.forEach((record) => {
+        const key = makeKey(keys.map((field) => record[field]));
+        if (!map.has(key)) {
+          map.set(key, createBucket(metric));
+        }
+        addRecordToBucket(map.get(key), record, metric);
+      });
+      map.forEach((bucket) => finalizeBucket(bucket, metric));
+      return map;
+    }
+
+    function createBucket(metric) {
+      if (metric === "orders") {
+        return {
+          newOrders: new Set(),
+          existingOrders: new Set(),
+          newValue: 0,
+          existingValue: 0,
+          total: 0
+        };
+      }
+      return {
+        newValue: 0,
+        existingValue: 0,
+        total: 0
+      };
+    }
+
+    function addRecordToBucket(bucket, record, metric) {
+      if (metric === "orders") {
+        const orderKey = record.orderId || record.rowKey;
+        if (record.segment === "new") {
+          bucket.newOrders.add(orderKey);
+        } else if (record.segment === "existing") {
+          bucket.existingOrders.add(orderKey);
+        }
+        return;
+      }
+
+      const value = metric === "quantity" ? record.quantity : 1;
+      if (record.segment === "new") {
+        bucket.newValue += value;
+      } else if (record.segment === "existing") {
+        bucket.existingValue += value;
+      }
+    }
+
+    function finalizeBucket(bucket, metric) {
+      if (metric === "orders") {
+        bucket.newValue = bucket.newOrders.size;
+        bucket.existingValue = bucket.existingOrders.size;
+      }
+      bucket.total = bucket.newValue + bucket.existingValue;
+      bucket.newRate = bucket.total > 0 ? bucket.newValue / bucket.total : 0;
+      bucket.existingRate = bucket.total > 0 ? bucket.existingValue / bucket.total : 0;
+    }
+
+    function getBucket(map, parts) {
+      return map.get(makeKey(parts)) || {
+        newValue: 0,
+        existingValue: 0,
+        total: 0,
+        newRate: 0,
+        existingRate: 0
+      };
+    }
+
+    function getSingleBucketValue(map, parts) {
+      const bucket = getBucket(map, parts);
+      return bucket.total;
+    }
+
+    function makeKey(parts) {
+      return parts.map((part) => String(part)).join("\u001f");
+    }
+
+    function splitKey(key) {
+      return String(key).split("\u001f");
+    }
+
+    function sortByTotal(a, b) {
+      if (b.total !== a.total) {
+        return b.total - a.total;
+      }
+      return a.name.localeCompare(b.name, "ja");
+    }
+
+    function sumBuckets(items) {
+      return items.reduce((sum, item) => sum + item.total, 0);
+    }
+
+    function renderLineChart(container, title, series, months, options = {}) {
+      const activeSeries = series.filter((item) => item.values.some((value) => value != null));
+      if (!activeSeries.length || !months.length) {
+        renderEmpty(container, "表示できるデータがありません。");
+        return;
+      }
+
+      const width = 920;
+      const height = 330;
+      const margin = {
+        top: 18,
+        right: 24,
+        bottom: 54,
+        left: 54
+      };
+      const plotWidth = width - margin.left - margin.right;
+      const plotHeight = height - margin.top - margin.bottom;
+      const xStep = months.length > 1 ? plotWidth / (months.length - 1) : plotWidth;
+      const x = (index) => margin.left + (months.length > 1 ? index * xStep : plotWidth / 2);
+      const y = (value) => margin.top + plotHeight - value * plotHeight;
+      const grid = [0, 0.25, 0.5, 0.75, 1];
+
+      const paths = activeSeries.map((item, seriesIndex) => {
+        const d = buildLinePath(item.values, x, y);
+        const points = item.values
+          .map((value, index) => {
+            if (value == null) {
+              return "";
+            }
+            return `<circle class="series-point" cx="${x(index)}" cy="${y(value)}" r="4.2" fill="${item.color}"></circle>`;
+          })
+          .join("");
+        return `
+          <g class="chart-series" data-series-index="${seriesIndex}">
+            <path class="series-line" d="${d}" fill="none" stroke="${item.color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
+            ${points}
+            <path class="series-hit" d="${d}" fill="none" stroke="transparent" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"></path>
+          </g>
+        `;
+      }).join("");
+
+      const xLabels = months
+        .map((month, index) => `<text x="${x(index)}" y="${height - 16}" text-anchor="middle">${escapeHtml(shortMonthLabel(month))}</text>`)
+        .join("");
+
+      const yGrid = grid
+        .map((value) => `
+          <line class="grid-line" x1="${margin.left}" x2="${width - margin.right}" y1="${y(value)}" y2="${y(value)}"></line>
+          <text x="${margin.left - 10}" y="${y(value) + 4}" text-anchor="end">${Math.round(value * 100)}%</text>
+        `)
+        .join("");
+
+      const legend = activeSeries
+        .map((item) => `<span style="color:${item.color}"><i class="mini-line"></i>${escapeHtml(item.name)}</span>`)
+        .join("");
+
+      container.innerHTML = `
+        <div class="chart-title-row">
+          <h3>${escapeHtml(title)}</h3>
+          <p class="small-copy">縦軸: 新規比率</p>
+        </div>
+        <svg class="line-chart axis" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(title)}">
+          ${yGrid}
+          <line class="grid-line" x1="${margin.left}" x2="${margin.left}" y1="${margin.top}" y2="${height - margin.bottom}"></line>
+          <line class="grid-line" x1="${margin.left}" x2="${width - margin.right}" y1="${height - margin.bottom}" y2="${height - margin.bottom}"></line>
+          <g class="quantity-bars" aria-hidden="true"></g>
+          ${paths}
+          ${xLabels}
+        </svg>
+        <div class="chart-tooltip" role="status"></div>
+        <div class="chart-legend">${legend}</div>
+      `;
+      attachLineChartHover(container, {
+        series: activeSeries,
+        months,
+        margin,
+        plotWidth,
+        plotHeight,
+        tooltipType: options.tooltipType || "brand"
+      });
+    }
+
+    function buildLinePath(values, x, y) {
+      const parts = [];
+      let open = false;
+      values.forEach((value, index) => {
+        if (value == null) {
+          open = false;
+          return;
+        }
+        parts.push(`${open ? "L" : "M"} ${x(index).toFixed(2)} ${y(value).toFixed(2)}`);
+        open = true;
+      });
+      return parts.join(" ");
+    }
+
+    function attachLineChartHover(container, config) {
+      const svg = container.querySelector(".line-chart");
+      const tooltip = container.querySelector(".chart-tooltip");
+      if (!svg || !tooltip) {
+        return;
+      }
+
+      if (container._lineChartAbort) {
+        container._lineChartAbort.abort();
+      }
+      const abortController = typeof AbortController !== "undefined" ? new AbortController() : null;
+      const listenerOptions = abortController ? { signal: abortController.signal } : undefined;
+      if (abortController) {
+        container._lineChartAbort = abortController;
+      }
+
+      const seriesGroups = [...container.querySelectorAll(".chart-series")];
+      let pinnedGroup = null;
+
+      const show = (event, group, isPinned = false) => {
+        const seriesIndex = Number(group.dataset.seriesIndex);
+        const item = config.series[seriesIndex];
+        if (!item) {
+          return;
+        }
+
+        const monthIndex = nearestMonthIndex(event, svg, config.months.length, config.margin, config.plotWidth);
+        group.classList.add("is-active");
+        seriesGroups.forEach((otherGroup) => {
+          otherGroup.classList.toggle("is-active", otherGroup === group);
+        });
+        svg.classList.add("is-hovering");
+        svg.classList.toggle("is-pinned", isPinned);
+        updateQuantityBars(svg, item, config.months, config.margin, config.plotWidth, config.plotHeight);
+        tooltip.innerHTML = buildChartTooltip(item, monthIndex, config.months, config.tooltipType);
+        positionChartTooltip(container, tooltip, event);
+        tooltip.classList.add("is-visible");
+      };
+
+      const clearActive = () => {
+        svg.classList.remove("is-hovering");
+        svg.classList.remove("is-pinned");
+        seriesGroups.forEach((group) => group.classList.remove("is-active"));
+        tooltip.classList.remove("is-visible");
+        clearQuantityBars(svg);
+      };
+
+      const hide = () => {
+        if (pinnedGroup) {
+          return;
+        }
+        clearActive();
+      };
+
+      const clearPinned = () => {
+        pinnedGroup = null;
+        clearActive();
+      };
+
+      seriesGroups.forEach((group) => {
+        group.addEventListener("pointerenter", (event) => {
+          if (!pinnedGroup) {
+            show(event, group);
+          }
+        }, listenerOptions);
+        group.addEventListener("pointermove", (event) => {
+          if (!pinnedGroup) {
+            show(event, group);
+          }
+        }, listenerOptions);
+        group.addEventListener("pointerleave", hide, listenerOptions);
+        group.addEventListener("click", (event) => {
+          event.stopPropagation();
+          pinnedGroup = group;
+          show(event, group, true);
+        }, listenerOptions);
+      });
+      svg.addEventListener("pointerleave", hide, listenerOptions);
+      container.addEventListener("click", (event) => {
+        if (!event.target.closest(".chart-series")) {
+          clearPinned();
+        }
+      }, listenerOptions);
+      if (container.ownerDocument && container.ownerDocument.addEventListener) {
+        container.ownerDocument.addEventListener("click", (event) => {
+          if (pinnedGroup && !container.contains(event.target)) {
+            clearPinned();
+          }
+        }, listenerOptions);
+      }
+    }
+
+    function updateQuantityBars(svg, item, months, margin, plotWidth, plotHeight) {
+      const layer = svg.querySelector(".quantity-bars");
+      if (!layer) {
+        return;
+      }
+
+      const totals = (item.quantityTotals && item.quantityTotals.length ? item.quantityTotals : item.totals || [])
+        .map((value) => Number(value) || 0);
+      const maxValue = Math.max(...totals, 0);
+      if (!months.length || maxValue <= 0) {
+        clearQuantityBars(svg);
+        return;
+      }
+
+      const baseline = margin.top + plotHeight;
+      const maxBarHeight = Math.min(plotHeight * 0.34, 88);
+      const xStep = months.length > 1 ? plotWidth / (months.length - 1) : plotWidth;
+      const barWidth = Math.max(9, Math.min(34, (months.length > 1 ? xStep : plotWidth) * 0.34));
+      const labelY = Math.max(margin.top + 12, baseline - maxBarHeight - 9);
+      const bars = totals.map((value, index) => {
+        if (value <= 0) {
+          return "";
+        }
+        const height = Math.max(2, (value / maxValue) * maxBarHeight);
+        const center = margin.left + (months.length > 1 ? index * xStep : plotWidth / 2);
+        const left = Math.max(margin.left + 1, Math.min(margin.left + plotWidth - barWidth - 1, center - barWidth / 2));
+        const top = baseline - height;
+        return `
+          <rect class="quantity-bar" x="${left.toFixed(2)}" y="${top.toFixed(2)}" width="${barWidth.toFixed(2)}" height="${height.toFixed(2)}" rx="3">
+            <title>${escapeHtml(shortMonthLabel(months[index]))} 数量 ${formatNumber(value)}</title>
+          </rect>
+        `;
+      }).join("");
+
+      layer.style.setProperty("--quantity-color", item.color || "var(--new-color)");
+      layer.innerHTML = `
+        <text class="quantity-axis-label" x="${margin.left}" y="${labelY.toFixed(2)}">数量 最大 ${escapeHtml(formatNumber(maxValue))}</text>
+        ${bars}
+      `;
+    }
+
+    function clearQuantityBars(svg) {
+      const layer = svg.querySelector(".quantity-bars");
+      if (layer) {
+        layer.innerHTML = "";
+      }
+    }
+
+    function nearestMonthIndex(event, svg, monthCount, margin, plotWidth) {
+      if (monthCount <= 1) {
+        return 0;
+      }
+      const rect = svg.getBoundingClientRect();
+      const relativeX = ((event.clientX - rect.left) / rect.width) * 920;
+      const clamped = Math.max(margin.left, Math.min(margin.left + plotWidth, relativeX));
+      return Math.max(0, Math.min(monthCount - 1, Math.round(((clamped - margin.left) / plotWidth) * (monthCount - 1))));
+    }
+
+    function buildChartTooltip(item, monthIndex, months, tooltipType) {
+      const value = item.values[monthIndex];
+      const month = months[monthIndex] ? monthLabel(months[monthIndex]) : "";
+      const total = item.totals[monthIndex] || 0;
+      const quantityTotal = item.quantityTotals ? item.quantityTotals[monthIndex] || 0 : total;
+      const rateText = value == null ? "-" : percent(value);
+      const quantityText = `数量 ${formatNumber(quantityTotal)}`;
+      const totalText = state.metric === "quantity"
+        ? quantityText
+        : `${metricLabel()} ${formatNumber(total)} / ${quantityText}`;
+
+      if (tooltipType === "model") {
+        const product = resolveProductInfo(item.product);
+        const image = product.imageUrl ? `<img src="${escapeHtml(product.imageUrl)}" alt="${escapeHtml(product.name || item.name)}">` : "";
+        const productName = product.name || "ECサイトで確認";
+        const price = product.price ? `<span class="tooltip-sub">${escapeHtml(product.price)}</span>` : "";
+        return `
+          <div class="tooltip-product">
+            ${image}
+            <span>
+              <span class="tooltip-kicker">${escapeHtml(month)}</span>
+              <span class="tooltip-title">${escapeHtml(item.name)}</span>
+              <span class="tooltip-sub">${escapeHtml(productName)}</span>
+              ${price}
+              <span class="tooltip-metric">新規 ${escapeHtml(rateText)}</span>
+              <span class="tooltip-sub">${escapeHtml(totalText)}</span>
+            </span>
+          </div>
+        `;
+      }
+
+      return `
+        <span class="tooltip-kicker">${escapeHtml(month)}</span>
+        <span class="tooltip-title">${escapeHtml(item.name)}</span>
+        <span class="tooltip-metric">新規 ${escapeHtml(rateText)}</span>
+        <span class="tooltip-sub">${escapeHtml(totalText)}</span>
+      `;
+    }
+
+    function positionChartTooltip(container, tooltip, event) {
+      const rect = container.getBoundingClientRect();
+      const edgePadding = 16;
+      const cursorGap = 22;
+      const tooltipWidth = tooltip.offsetWidth || 260;
+      const tooltipHeight = tooltip.offsetHeight || 140;
+      let x = event.clientX - rect.left + cursorGap;
+      let y = event.clientY - rect.top - tooltipHeight - cursorGap;
+
+      if (x + tooltipWidth + edgePadding > rect.width) {
+        x = rect.width - tooltipWidth - edgePadding;
+      }
+      if (y < edgePadding) {
+        y = edgePadding;
+      }
+      if (y + tooltipHeight + edgePadding > rect.height) {
+        y = rect.height - tooltipHeight - edgePadding;
+      }
+
+      tooltip.style.left = `${Math.max(edgePadding, x)}px`;
+      tooltip.style.top = `${Math.max(edgePadding, y)}px`;
+    }
+
+    function renderMatrixTable(container, rows, months, bucketGetter, nameLabel, options = {}) {
+      if (!rows.length) {
+        container.innerHTML = "";
+        return;
+      }
+
+      const headers = months.map((month) => `<th class="num">${escapeHtml(monthLabel(month))}</th>`).join("");
+      const productHeader = options.showProduct ? "<th>商品</th>" : "";
+      const body = rows.map((row) => {
+        const cells = months.map((month) => ratioCell(bucketGetter(row, month))).join("");
+        const note = row.examples && row.examples.length ? `<span class="subline">${escapeHtml(row.examples.join(" / "))}</span>` : "";
+        const productCell = options.showProduct ? renderProductCell(row) : "";
+        return `
+          <tr>
+            <td class="name-cell">${escapeHtml(row.name)}${note}</td>
+            ${productCell}
+            <td class="num">${formatNumber(row.total)}</td>
+            <td class="num">${percent(row.newRate)}</td>
+            <td class="num">${percent(row.existingRate)}</td>
+            ${cells}
+          </tr>
+        `;
+      }).join("");
+
+      container.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>${escapeHtml(nameLabel)}</th>
+              ${productHeader}
+              <th class="num">${escapeHtml(metricLabel())}</th>
+              <th class="num">新規</th>
+              <th class="num">既存</th>
+              ${headers}
+            </tr>
+          </thead>
+          <tbody>${body}</tbody>
+        </table>
+      `;
+    }
+
+    function ratioCell(bucket) {
+      if (!bucket || bucket.total <= 0) {
+        return `
+          <td>
+            <div class="ratio-cell">
+              <div class="ratio-text">-</div>
+              <div class="ratio-total">0</div>
+            </div>
+          </td>
+        `;
+      }
+
+      const newWidth = Math.max(0, Math.min(100, bucket.newRate * 100));
+      const existingWidth = Math.max(0, Math.min(100, bucket.existingRate * 100));
+      return `
+        <td>
+          <div class="ratio-cell">
+            <div class="ratio-bar" aria-hidden="true">
+              <span class="ratio-new" style="width:${newWidth}%"></span>
+              <span class="ratio-existing" style="width:${existingWidth}%"></span>
+            </div>
+            <div class="ratio-text">${percent(bucket.newRate)} / ${percent(bucket.existingRate)}</div>
+            <div class="ratio-total">${escapeHtml(metricLabel())} ${formatNumber(bucket.total)}</div>
+          </div>
+        </td>
+      `;
+    }
+
+    function renderModelRanking(container, rows) {
+      if (!rows.length) {
+        container.innerHTML = "";
+        return;
+      }
+
+      const maxTotal = Math.max(...rows.map((row) => row.total), 1);
+      const body = rows.map((row, index) => `
+        <tr>
+          <td class="num">${index + 1}</td>
+          <td class="name-cell">
+            ${escapeHtml(row.name)}
+            ${row.examples.length ? `<span class="subline">${escapeHtml(row.examples.join(" / "))}</span>` : ""}
+          </td>
+          ${renderProductCell(row)}
+          <td class="${actionCellClass(row.action)}">${renderActionCell(row.action)}</td>
+          <td class="num">${formatNumber(row.total)}</td>
+          <td>
+            <div class="rank-bar"><span style="width:${(row.total / maxTotal) * 100}%"></span></div>
+          </td>
+          <td class="num">${percent(row.newRate)}</td>
+        </tr>
+      `).join("");
+
+      container.innerHTML = `
+        <table class="ranking-table">
+          <thead>
+            <tr>
+              <th class="num">#</th>
+              <th>型番</th>
+              <th>商品</th>
+              <th>推奨アクション</th>
+              <th class="num">${escapeHtml(metricLabel())}</th>
+              <th>構成</th>
+              <th class="num">新規</th>
+            </tr>
+          </thead>
+          <tbody>${body}</tbody>
+        </table>
+      `;
+    }
+
+    function renderModelActionCandidates(container, rows) {
+      const candidates = getActionCandidateRows(rows);
+      const head = `
+        <div class="action-panel-head">
+          <h3>推奨アクション候補</h3>
+          <span>スコアが高い順に表示 / ${escapeHtml(recommendationPeriodLabel())}</span>
+        </div>
+      `;
+      if (!candidates.length) {
+        container.innerHTML = `${head}<div class="action-empty">推奨アクション候補はありません。</div>`;
+        return;
+      }
+
+      const body = candidates.map((row) => `
+        <tr>
+          <td class="${actionCellClass(row.action)}">${renderActionCell(row.action, { showNone: false })}</td>
+          <td>
+            <div class="score-stack">
+              <span class="priority-pill">${escapeHtml(row.action.priority)}</span>
+              <span class="score-pill">スコア ${escapeHtml(formatActionScore(row.action.score))}</span>
+            </div>
+          </td>
+          <td class="name-cell">
+            ${escapeHtml(row.name)}
+            ${row.examples.length ? `<span class="subline">${escapeHtml(row.examples.join(" / "))}</span>` : ""}
+          </td>
+          ${renderProductCell(row)}
+          <td class="num">${formatNumber(row.total)}</td>
+          <td class="num">${percent(row.newRate)}</td>
+          <td class="num">${row.rank}</td>
+        </tr>
+      `).join("");
+
+      container.innerHTML = `
+        ${head}
+        <table class="action-table">
+          <thead>
+            <tr>
+              <th>推奨アクション</th>
+              <th>優先度 / スコア</th>
+              <th>型番</th>
+              <th>商品</th>
+              <th class="num">${escapeHtml(metricLabel())}</th>
+              <th class="num">新規</th>
+              <th class="num">${escapeHtml(metricLabel())}順位</th>
+            </tr>
+          </thead>
+          <tbody>${body}</tbody>
+        </table>
+      `;
+    }
+
+    function recommendationPeriodLabel() {
+      const recentMonths = state.months.slice(-3);
+      const previousMonths = state.months.slice(-6, -3);
+      if (!recentMonths.length) {
+        return "集計期間: -";
+      }
+      const allText = state.months.length === 1
+        ? shortMonthLabel(state.months[0])
+        : `${shortMonthLabel(state.months[0])} - ${shortMonthLabel(state.months[state.months.length - 1])}`;
+      const recentText = recentMonths.map(shortMonthLabel).join(" - ");
+      const previousText = previousMonths.length ? ` / 比較: ${previousMonths.map(shortMonthLabel).join(" - ")}` : "";
+      return `集計期間: ${allText} / 直近判定: 直近${recentMonths.length}ヶ月 ${recentText}${previousText}`;
+    }
+
+    function renderColorDrilldown(container, colorRows) {
+      const head = `
+        <div class="action-panel-head">
+          <h3>色別 型番ドリルダウン</h3>
+          <span>${escapeHtml(state.selectedBrand)} / 6色分類 / 色グループ内の上位型番</span>
+        </div>
+      `;
+      if (!colorRows.length) {
+        container.innerHTML = `${head}<div class="action-empty">色別に表示できるデータがありません。</div>`;
+        return;
+      }
+
+      const cards = colorRows.map((row, index) => {
+        const monthly = aggregate(row.records, ["model", "month"], state.metric);
+        const maxTotal = Math.max(...row.models.map((model) => model.total), 1);
+        const modelRows = row.models.map((model) => {
+          const cells = state.months.map((month) => ratioCell(getBucket(monthly, [model.name, month]))).join("");
+          return `
+            <tr>
+              <td class="name-cell">
+                ${escapeHtml(model.name)}
+                ${model.examples.length ? `<span class="subline">${escapeHtml(model.examples.join(" / "))}</span>` : ""}
+              </td>
+              ${renderProductCell(model)}
+              <td class="num">${formatNumber(model.total)}</td>
+              <td class="num">${percent(model.newRate)}</td>
+              <td class="num">${percent(model.existingRate)}</td>
+              <td><div class="rank-bar"><span style="width:${(model.total / maxTotal) * 100}%"></span></div></td>
+              ${cells}
+            </tr>
+          `;
+        }).join("");
+        const monthHeaders = state.months.map((month) => `<th class="num">${escapeHtml(monthLabel(month))}</th>`).join("");
+        return `
+          <details class="color-drill-card" ${index === 0 ? "open" : ""}>
+            <summary>
+              <span class="color-chip is-${escapeHtml(row.group.value)}">${escapeHtml(row.group.label)}</span>
+              <span class="color-summary-metric">${escapeHtml(metricLabel())} ${formatNumber(row.bucket.total)}</span>
+              <span class="color-summary-metric">新規 ${percent(row.bucket.newRate)}</span>
+              <span class="color-summary-metric">既存 ${percent(row.bucket.existingRate)}</span>
+              <span class="color-summary-metric">型番 ${formatNumber(row.models.length)}</span>
+            </summary>
+            <table class="color-model-table">
+              <thead>
+                <tr>
+                  <th>型番</th>
+                  <th>商品</th>
+                  <th class="num">${escapeHtml(metricLabel())}</th>
+                  <th class="num">新規</th>
+                  <th class="num">既存</th>
+                  <th>構成</th>
+                  ${monthHeaders}
+                </tr>
+              </thead>
+              <tbody>${modelRows}</tbody>
+            </table>
+          </details>
+        `;
+      }).join("");
+
+      container.innerHTML = `${head}<div class="color-drill-list">${cards}</div>`;
+    }
+
+    function renderActionCell(action, options = {}) {
+      if (!action || action.type === "none") {
+        return options.showNone === false ? "" : `<span class="action-none">推奨なし</span>`;
+      }
+
+      const className = action.type === "recovery"
+        ? "is-recovery"
+        : action.type === "retention"
+          ? "is-retention"
+          : "";
+      return `
+        <div class="action-cell">
+          <span class="action-badge ${className}">${escapeHtml(action.label)}</span>
+          <span class="action-reason">${escapeHtml(action.reason)}</span>
+        </div>
+      `;
+    }
+
+    function actionCellClass(action) {
+      if (!action || action.type === "none") {
+        return "";
+      }
+      return `action-td is-${action.type}`;
+    }
+
+    function formatActionScore(score) {
+      return Number(score || 0).toLocaleString("ja-JP", {
+        maximumFractionDigits: 1
+      });
+    }
+
+    function renderProductCell(row) {
+      const product = resolveProductInfo(row.product);
+      const image = product.imageUrl ? `
+        <span class="product-image-box">
+          <img src="${escapeHtml(product.imageUrl)}" alt="${escapeHtml(product.name || product.sku)}" loading="lazy" onerror="this.parentElement.classList.add('is-missing')">
+          <span class="thumb-fallback">画像なし</span>
+        </span>
+      ` : `
+        <span class="product-image-box is-missing">
+          <span class="thumb-fallback">画像なし</span>
+        </span>
+      `;
+      const link = product.url ? `<a class="product-link" href="${escapeHtml(product.url)}" target="_blank" rel="noopener">ECサイト</a>` : "";
+      const price = product.price ? `<span class="product-price">${escapeHtml(product.price)}</span>` : "";
+      return `
+        <td class="product-cell">
+          <div class="product-preview">
+            ${image}
+            <span>
+              <span class="product-name">${escapeHtml(product.name || "ECサイトで確認")}</span>
+              ${price}
+              ${link}
+            </span>
+          </div>
+        </td>
+      `;
+    }
+
+    function renderEmpty(container, text) {
+      if (container._lineChartAbort) {
+        container._lineChartAbort.abort();
+        container._lineChartAbort = null;
+      }
+      container.innerHTML = `<div class="chart-empty">${escapeHtml(text)}</div>`;
+    }
+
+    function metricLabel() {
+      if (state.metric === "orders") {
+        return "注文数";
+      }
+      if (state.metric === "rows") {
+        return "明細行";
+      }
+      return "数量";
+    }
+
+    function formatNumber(value) {
+      return Number(value || 0).toLocaleString("ja-JP", {
+        maximumFractionDigits: 1
+      });
+    }
+
+    function formatPercent(value, total) {
+      return total > 0 ? percent(value / total) : "-";
+    }
+
+    function percent(value) {
+      return `${(value * 100).toLocaleString("ja-JP", {
+        maximumFractionDigits: 1
+      })}%`;
+    }
+
+    function shortMonthLabel(key) {
+      const [year, month] = key.split("-");
+      return `${year.slice(2)}/${Number(month)}`;
+    }
+
+    function formatDateTime(date) {
+      return new Intl.DateTimeFormat("ja-JP", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit"
+      }).format(date);
+    }
+
+    function setMessage(text, type) {
+      els.message.textContent = text;
+      els.message.className = "message";
+      if (type) {
+        els.message.classList.add(`is-${type}`);
+      }
+    }
+
+    function exportCurrentReport() {
+      if (!state.records.length) {
+        return;
+      }
+      const styles = document.getElementById("appStyles").textContent;
+      const reportHtml = document.getElementById("report").outerHTML;
+      const documentHtml = `<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AW注文×キャンペーン利用レポート</title>
+  <style>${styles}</style>
+</head>
+<body>
+  <main class="app exported">
+    ${reportHtml.replace(" hidden", "")}
+  </main>
+</body>
+</html>`;
+      const blob = new Blob([documentHtml], { type: "text/html;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = `aw_campaign_report_${new Date().toISOString().slice(0, 10)}.html`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+  </script>
+</body>
+</html>
