@@ -2,7 +2,7 @@
 
 作成日: 2026-08-11
 
-状態: 移行実施中
+状態: 移行完了
 
 ## 対象
 
@@ -31,13 +31,15 @@
 
 公開artifactは`pages-manifest.json`記載のファイルだけで構成する。候補commit内のpackage scriptをPages credential付きで実行せず、workflow自体のhashが変わった場合は再登録まで安全停止する。
 
-## 初回切替
+## 移行結果
 
-1. profile、検証、CI、固定Pages workflowをGitHub mainへ統合する。
-2. 案件フォルダのGitをGitHub mainへ接続し、旧ローカル履歴を別branchとして保持する。
-3. machine profileへ案件アプリrootを固定bindingする。
-4. 共通GitHub Pages adapterをアプリ単位のIDでhash登録する。
-5. legacy branch buildをworkflow buildへ切り替え、現在commitをbaseline artifactとして公開する。
-6. 低リスク変更を共通改修・releaseで通し、PR CI、main CI、Pages、health、rollback状態を確認する。
+2026年8月11日に、次を完了した。
 
-結果不明のdispatchは自動再実行せず、release ID付きGitHub Actions runと公開markerをread-onlyで照合する。
+1. app profileと検証を登録した。
+2. GitHub Pull RequestとCIを統合した。
+3. 手元GitとGitHub mainを整合させ、旧ローカル履歴は別branchとして保全した。
+4. machine profileへ案件アプリrootを固定bindingし、共通GitHub Pages adapterをアプリ単位のIDでhash登録した。
+5. legacy branch buildから固定workflow buildへ切り替え、現在commitをbaseline artifactとして公開した。
+6. 低リスク変更を共通改修・releaseでcanaryとして通した。
+
+公開URL（`https://inoue-pell.github.io/aw-report/`）と静的サイトの内容は移行前後で変更していない。healthは公開release markerを公開済みcommitへ結び付けて確認する。rollbackは直前に公開したcommitのartifact再公開へ結び付いている。
