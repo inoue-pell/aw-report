@@ -1,0 +1,86 @@
+{
+  "approvalPolicy": {
+    "additionalConfirmationRisks": [
+      "credential-change",
+      "destructive",
+      "pages-workflow-change",
+      "provider-change"
+    ],
+    "automatedInitiation": "standing_authorization_required",
+    "conditionalAutoPublication": "owner_policy_grant_required",
+    "directOwnerRequest": "request_is_authorization",
+    "manualPublication": "release_confirmation_required"
+  },
+  "appId": "aw-report",
+  "projectId": "asics",
+  "providers": [
+    "claude",
+    "codex"
+  ],
+  "releaseTargets": [
+    {
+      "adapter": "aw-report-github-pages-release-v1",
+      "automaticPolicy": null,
+      "ciWorkflow": ".github/workflows/ci.yml",
+      "environment": "production-pages",
+      "externalService": {
+        "visibility": "public"
+      },
+      "healthChecks": [
+        "pages-release-binding",
+        "public-static-assets"
+      ],
+      "kind": "external_service",
+      "macLocal": null,
+      "publicationMode": "manual_confirmation",
+      "rollback": {
+        "adapter": "aw-report-github-pages-rollback-v1",
+        "requiredEvidence": [
+          "commit",
+          "deployment-id",
+          "health-result"
+        ]
+      },
+      "targetId": "public-pages"
+    }
+  ],
+  "repository": {
+    "changeStrategy": "pull_request",
+    "defaultBranch": "main",
+    "remote": "inoue-pell/aw-report"
+  },
+  "review": {
+    "requiredEvidence": []
+  },
+  "schemaVersion": 3,
+  "verification": {
+    "required": [
+      "static-site-tests",
+      "pages-contract-tests"
+    ]
+  },
+  "workspace": {
+    "forbiddenPaths": [
+      ".ai-work",
+      ".cowork",
+      ".env",
+      ".git",
+      ".github",
+      "_site",
+      "node_modules",
+      "secrets"
+    ],
+    "writablePaths": [
+      ".gitignore",
+      "AGENTS.md",
+      "CLAUDE.md",
+      "README.md",
+      "aw_product_catalog.js",
+      "docs",
+      "index.html",
+      "package.json",
+      "pages-manifest.json",
+      "tests"
+    ]
+  }
+}
