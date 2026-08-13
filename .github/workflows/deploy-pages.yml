@@ -1,15 +1,14 @@
 name: Deploy GitHub Pages
-run-name: AI-Work Pages ${{ inputs.release_id }} ${{ inputs.release_commit }}
+run-name: Pages ${{ github.event_name == 'workflow_dispatch' && inputs.release_commit || github.sha }}
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       release_commit:
-        description: Fixed Git commit to publish
-        required: true
-        type: string
-      release_id:
-        description: AI-Work release ID
+        description: Exact Git commit to restore
         required: true
         type: string
 
@@ -32,14 +31,14 @@ jobs:
       - name: Check out the requested release
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ inputs.release_commit }}
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.release_commit || github.sha }}
           fetch-depth: 1
           persist-credentials: false
 
       - name: Assemble the static artifact
         env:
           APP_ID: aw-report
-          RELEASE_COMMIT: ${{ inputs.release_commit }}
+          RELEASE_COMMIT: ${{ github.event_name == 'workflow_dispatch' && inputs.release_commit || github.sha }}
         shell: bash
         run: |
           set -euo pipefail

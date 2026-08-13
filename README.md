@@ -32,10 +32,10 @@ npm test
 - `pages-manifest.json`: 本番artifactへ含めるファイルのallowlist
 - `.ai-work/`: Claude／Codex共通の開発・検証・release契約
 - `.github/workflows/ci.yml`: Pull Request／mainの決定論的検証
-- `.github/workflows/deploy-pages.yml`: provider標準deploy移行まで、登録済みtargetだけで凍結互換利用する固定Pages公開
+- `.github/workflows/deploy-pages.yml`: mainのCI済みmerge commitを公開し、直前commitを手動復元できるGitHub Pages標準workflow
 
 ## リリース
 
-provider標準deployとrollbackのcanaryが完了するまでは、現在登録済みの`public-pages` targetとadapterだけを組合せを変えずに凍結互換利用します。新しいtarget・adapter・configureは追加しません。本人から実装・変更を依頼された通常releaseは、依頼元セッションがPull Request、CI、固定Pages公開、公開`release.json`とHTMLのhealth、必要な直前artifactへのrollback、結果報告まで担当します。
+Pull Requestのmerge候補CIに合格したexact merge commitだけをmainへ反映し、GitHub Pages標準workflowが1回公開します。依頼元セッションが公開`release.json`とHTMLを確認します。rollbackは同じworkflowへ直前の正常commitを1回だけ指定し、正常確認後に現行commitを1回だけ再公開します。共通adapterは通常公開に使いません。
 
 移行と初回baselineの詳細は[共通基盤移行](docs/20260811_common-platform-migration.md)を参照してください。

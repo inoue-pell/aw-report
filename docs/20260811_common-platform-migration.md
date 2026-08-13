@@ -1,6 +1,6 @@
 # 共通開発・リリース基盤への移行
 
-> 2026-08-13運用更新: 本書の共通GitHub Pages adapterは、provider標準deployとrollbackのcanary完了まで、登録済み`public-pages` targetだけに使う凍結互換経路である。新しいtarget・adapter・credential・公開方式を追加せず、通常releaseのためのconfigureを行わない。依頼元セッションがGitHub、CI、互換経路の実行、公開health、必要なrollback、結果報告までを所有する。以下の移行・baseline事実は履歴として保持する。
+> 2026-08-13運用更新: `public-pages`はGitHub Pages標準workflowへ移行した。mainへ入ったCI済みmerge commitを自動公開し、直前の正常commitは同じworkflowの手動実行で復元する。共通GitHub Pages adapterは通常公開に使わず、以下の旧接続・baseline事実は退役監査として保持する。
 
 作成日: 2026-08-11
 
@@ -25,13 +25,13 @@
 - repository: `inoue-pell/aw-report`
 - target: `public-pages`
 - environment: `production-pages`
-- publication mode: `manual_confirmation`
+- publication mode: mainのCI済みmerge commitを標準workflowで自動公開
 - CI: `.github/workflows/ci.yml`
-- deploy: hash固定した`.github/workflows/deploy-pages.yml`
+- deploy: main pushと固定commit復元を扱うhash固定した`.github/workflows/deploy-pages.yml`
 - health: 公開`release.json`のcommit一致と公開HTML 200
-- rollback: 直前commitのPages artifactを同じ固定workflowで再公開
+- rollback: 直前commitのPages artifactを同じ固定workflowへ1回だけ指定して再公開
 
-公開artifactは`pages-manifest.json`記載のファイルだけで構成する。候補commit内のpackage scriptをPages credential付きで実行せず、workflow自体のhashが変わった場合は再登録まで安全停止する。
+公開artifactは`pages-manifest.json`記載のファイルだけで構成する。候補commit内のpackage scriptをPages権限付きで実行せず、GitHub標準のPages権限だけを使う。
 
 ## 移行結果
 

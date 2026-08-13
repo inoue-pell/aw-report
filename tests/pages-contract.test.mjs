@@ -87,7 +87,8 @@ test("CI and Pages workflow use immutable official action commits", () => {
   assert.match(ci, /pull_request:/u);
   assert.doesNotMatch(ci, /^\s{2}push:/mu);
   assert.match(deployment, /workflow_dispatch:/u);
-  assert.doesNotMatch(deployment, /^\s{2}push:/mu);
+  assert.match(deployment, /^\s{2}push:/mu);
+  assert.match(deployment, /branches:\s*\n\s*- main/u);
   assert.match(deployment, /persist-credentials:\s*false/gu);
   assert.doesNotMatch(deployment, /npm\s+(?:run|exec)|npx|pnpm|yarn/iu);
 });
@@ -98,5 +99,6 @@ test("deployment workflow creates a commit marker in one static artifact", () =>
   assert.match(deployment, /schemaVersion:\s*1,\s*appId,\s*commit/u);
   assert.match(deployment, /Symlinks are not publishable/u);
   assert.match(deployment, /path:\s*_site/u);
-  assert.match(deployment, /AI-Work Pages \$\{\{ inputs\.release_id \}\} \$\{\{ inputs\.release_commit \}\}/u);
+  assert.match(deployment, /Pages \$\{\{ github\.event_name == 'workflow_dispatch'/u);
+  assert.doesNotMatch(deployment, /release_id/u);
 });
