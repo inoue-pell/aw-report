@@ -85,7 +85,7 @@ test("CI and Pages workflow use immutable official action commits", () => {
     assert.ok(`${ci}\n${deployment}`.includes(action), action);
   }
   assert.match(ci, /pull_request:/u);
-  assert.match(ci, /push:[\s\S]*?- main/u);
+  assert.doesNotMatch(ci, /^\s{2}push:/mu);
   assert.match(deployment, /workflow_dispatch:/u);
   assert.doesNotMatch(deployment, /^\s{2}push:/mu);
   assert.match(deployment, /persist-credentials:\s*false/gu);
