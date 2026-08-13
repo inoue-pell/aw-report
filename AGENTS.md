@@ -4,7 +4,7 @@
 - 利用者が読み込むCSV／Excelはブラウザ内だけで処理する。注文データ、キャンペーン利用データ、集計結果をサーバーへ送信する機能を追加しない。
 - 商品情報の補完に使う外部通信は公開商品ページの読み取りだけに限定し、認証情報や利用者入力を送信しない。
 - 本番URLは`https://inoue-pell.github.io/aw-report/`、release targetは`public-pages`を正本とする。
-- GitHub Pagesのprovider標準deployとrollbackのcanaryが完了するまでは、現在登録済みの`public-pages` targetと共通GitHub Pages adapterを組合せを変えずに凍結互換利用する。新しいtarget・adapter・credential・公開方式を追加せず、通常releaseのためにadapterを再configureしない。Claude用またはCodex用の別経路も追加しない。
-- 本人から実装・変更を依頼された通常releaseは、依頼元セッションがGitHub、CI、凍結互換経路によるPages公開、health、必要なrollback、結果報告まで担当する。上位共通指示の高リスク作用だけを事前確認する。
-- `.github/workflows/deploy-pages.yml`はcredentialを使うhash固定workflowである。provider標準経路へ移行するまでは凍結し、変更が必要な場合は通常改修へ混ぜず、高リスク境界に該当する内容だけを事前確認する。
+- `public-pages`はGitHub Pagesの標準workflowを正規公開経路とする。PRのCI済みmerge commitがmainへ入ると1回だけ公開し、依頼元セッションが公開`release.json`、HTML、deployment履歴まで確認する。共通GitHub Pages adapter、ReleasePlan、permit、receiptを通常公開へ戻さない。
+- rollbackは`.github/workflows/deploy-pages.yml`を`workflow_dispatch`し、直前に正常確認したexact commitを1回だけ再公開する。結果不明時は再送せず、Actions、Pages deployment、公開`release.json`をread-onlyで照合する。
+- `.github/workflows/deploy-pages.yml`はGitHub標準のPages権限だけを使うhash固定workflowである。新しいcredential、公開先、custom domain、外部送信を追加しない。
 - 公開対象は`pages-manifest.json`へ列挙した静的ファイルだけとし、原本データ、作業資料、秘密情報を追加しない。
