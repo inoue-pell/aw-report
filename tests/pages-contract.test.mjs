@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { lstatSync, readFileSync } from "node:fs";
+import { existsSync, lstatSync, readFileSync } from "node:fs";
 import test from "node:test";
 
 const readJson = (path) => JSON.parse(
@@ -10,52 +10,9 @@ const readText = (path) => readFileSync(
   "utf8",
 );
 
-test("app profile binds one public GitHub Pages target", () => {
-  const profile = readJson(".ai-work/app-profile.json");
-  assert.equal(profile.schemaVersion, 3);
-  assert.equal(profile.appId, "aw-report");
-  assert.equal(profile.projectId, "asics");
-  assert.deepEqual(profile.providers, ["claude", "codex"]);
-  assert.deepEqual(profile.repository, {
-    changeStrategy: "pull_request",
-    defaultBranch: "main",
-    remote: "inoue-pell/aw-report",
-  });
-  assert.equal(profile.releaseTargets.length, 1);
-  assert.deepEqual(profile.releaseTargets[0], {
-    adapter: "aw-report-github-pages-release-v1",
-    automaticPolicy: null,
-    ciWorkflow: ".github/workflows/ci.yml",
-    environment: "production-pages",
-    externalService: { visibility: "public" },
-    healthChecks: ["pages-release-binding", "public-static-assets"],
-    kind: "external_service",
-    macLocal: null,
-    publicationMode: "manual_confirmation",
-    rollback: {
-      adapter: "aw-report-github-pages-rollback-v1",
-      requiredEvidence: ["commit", "deployment-id", "health-result"],
-    },
-    targetId: "public-pages",
-  });
-  assert.ok(profile.workspace.forbiddenPaths.includes(".github"));
-  assert.ok(profile.workspace.forbiddenPaths.includes(".ai-work"));
-});
-
-test("verification registry runs only fixed dependency-free tests", () => {
-  const registry = readJson(".ai-work/verification-adapters.json");
-  assert.equal(registry.schemaVersion, 3);
-  assert.deepEqual(Object.keys(registry.adapters).sort(), [
-    "pages-contract-tests",
-    "static-site-tests",
-  ]);
-  for (const adapter of Object.values(registry.adapters)) {
-    assert.equal(adapter.kind, "node_test");
-    assert.equal(adapter.importer, "node:fs");
-    assert.equal(adapter.network, "none");
-    assert.deepEqual(adapter.generatedPaths, []);
-    assert.equal(adapter.files.length, 1);
-  }
+test("legacy common release profile stays retired", () => {
+  assert.equal(existsSync(new URL("../.ai-work/app-profile.json", import.meta.url)), false);
+  assert.equal(existsSync(new URL("../.ai-work/verification-adapters.json", import.meta.url)), false);
 });
 
 test("Pages manifest exposes only the two application assets", () => {

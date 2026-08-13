@@ -1,6 +1,6 @@
 # 共通開発・リリース基盤への移行
 
-> 2026-08-13運用更新: `public-pages`はGitHub Pages標準workflowへ移行した。mainへ入ったCI済みmerge commitを自動公開し、直前の正常commitは同じworkflowの手動実行で復元する。共通GitHub Pages adapterは通常公開に使わず、以下の旧接続・baseline事実は退役監査として保持する。
+> 2026-08-13運用更新: `public-pages`はGitHub Pages標準workflowへ移行した。mainへ入ったCI済みmerge commitを自動公開し、直前の正常commitは同じworkflowの手動実行で復元する。deploy・rollback・前進復帰canary後に旧共通adapterの登録解除と監査archiveを完了し、`.ai-work` release profileも削除した。以下の旧接続・baseline事実は退役監査として保持する。
 
 作成日: 2026-08-11
 
@@ -10,7 +10,7 @@
 
 `aw-report`は`asics`案件だけで利用するため、案件の`apps/aw-report/`を正本として維持する。配置場所を`AI-Work/Apps/`へ変更しない。
 
-公開先は既存の`https://inoue-pell.github.io/aw-report/`を維持し、app profile v3の`external_service`／`public-pages` targetとして共通基盤へ接続する。
+公開先は既存の`https://inoue-pell.github.io/aw-report/`を維持する。移行時はapp profile v3の`external_service`／`public-pages` targetとして共通基盤へ接続していたが、現在の公開設定はこのrepositoryとGitHub Pagesを正本とする。
 
 ## 移行前に確認したこと
 
@@ -37,11 +37,13 @@
 
 2026年8月11日に、次を完了した。
 
-1. app profileと検証を登録した。
+1. app profileと検証を登録した（現在は退役済み）。
 2. GitHub Pull RequestとCIを統合した。
 3. 手元GitとGitHub mainを整合させ、旧ローカル履歴は別branchとして保全した。
 4. machine profileへ案件アプリrootを固定bindingし、共通GitHub Pages adapterをアプリ単位のIDでhash登録した。
 5. legacy branch buildから固定workflow buildへ切り替え、現在commitをbaseline artifactとして公開した。
 6. 低リスク変更を共通改修・releaseでcanaryとして通した。
+7. GitHub Pages標準workflowでdeploy、直前commitへのrollback、現行commitへの前進復帰を確認した。
+8. 旧adapter 2 IDを登録解除し、信頼済み実体、tombstone、intent、completion receiptを監査archiveへ保全した。
 
 公開URL（`https://inoue-pell.github.io/aw-report/`）と静的サイトの内容は移行前後で変更していない。healthは公開release markerを公開済みcommitへ結び付けて確認する。rollbackは直前に公開したcommitのartifact再公開へ結び付いている。
