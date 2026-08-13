@@ -1,5 +1,7 @@
 # 共通開発・リリース基盤への移行
 
+> 2026-08-13運用更新: 本書の共通GitHub Pages adapterは、provider標準deployとrollbackのcanary完了まで、登録済み`public-pages` targetだけに使う凍結互換経路である。新しいtarget・adapter・credential・公開方式を追加せず、通常releaseのためのconfigureを行わない。依頼元セッションがGitHub、CI、互換経路の実行、公開health、必要なrollback、結果報告までを所有する。以下の移行・baseline事実は履歴として保持する。
+
 作成日: 2026-08-11
 
 状態: 移行完了
