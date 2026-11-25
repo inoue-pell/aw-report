@@ -2,7 +2,8 @@
 
 アシックス案件専用の静的Webアプリです。注文×キャンペーン利用データをブラウザ内で読み込み、新規／既存、型番、ブランド、キャンペーン別に集計・可視化します。
 
-- 本番: https://inoue-pell.github.io/aw-report/
+- 公開状態: 2026-11-25に公開終了（GitHub Pages設定を解除し、自動公開workflowを無効化）
+- 旧公開先: https://inoue-pell.github.io/aw-report/
 - 所有案件: `asics`
 - 公開方式: GitHub Pages
 - データ処理: 利用者のブラウザ内のみ
@@ -33,8 +34,10 @@ npm test
 - `.github/workflows/ci.yml`: Pull Request／mainの決定論的検証
 - `.github/workflows/deploy-pages.yml`: mainのCI済みmerge commitを公開し、直前commitを手動復元できるGitHub Pages標準workflow
 
-## リリース
+## 公開終了と再公開
 
-Pull Requestのmerge候補CIに合格したexact merge commitだけをmainへ反映し、GitHub Pages標準workflowが1回公開します。依頼元セッションが公開`release.json`とHTMLを確認します。rollbackは同じworkflowへ直前の正常commitを1回だけ指定し、正常確認後に現行commitを1回だけ再公開します。旧共通adapterと`.ai-work` release profileは退役済みです。
+本人の依頼でWeb公開を終了し、GitHub Pagesのサイト設定を解除しました。GitHub上の`Deploy GitHub Pages` workflowも無効化しているため、main更新による自動公開は行われません。ソースとGit履歴は保持し、ローカル確認は引き続き利用できます。
+
+再公開は本人から明示的に依頼された場合だけ行います。同じリポジトリのGitHub PagesをGitHub Actions方式で再設定し、`Deploy GitHub Pages` workflowを再有効化したうえで、PRのmerge候補CIに合格したexact commitを指定して公開します。依頼元セッションが公開`release.json`とHTML、deployment履歴を確認します。旧共通adapterと`.ai-work` release profileは退役済みです。
 
 移行と初回baselineの詳細は[共通基盤移行](docs/20260811_common-platform-migration.md)を参照してください。
